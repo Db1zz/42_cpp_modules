@@ -1,44 +1,38 @@
 #ifndef CONTACT_H
 #define CONTACT_H
 
+#include <string>
+
 class Contact {
-/*
-  Public class functions/constructors and destructors
-*/
 public:
-  // Class constructor/destructor
-  Contact() = default;
-  ~Contact();
+  // Contact constructor
+  Contact(); // default class constructor
+  Contact(const std::string& first_name,
+          const std::string& last_name,
+          const std::string& nickname,
+          const std::string& phone_number,
+          const std::string& darkest_secret);
 
-  // Getters
-  const char* getFirstName(void) const;
-  const char* getLastName(void) const;
-  const char* getNickname(void) const;
-  const int* getPhoneNumber(void) const;
-  const char* getDarkestSecret(void) const;
+  // Public functions
+  const std::string& getFirstName() const;
+  const std::string& getLastName() const;
+  const std::string& getNickname() const;
+  const std::string& getPhoneNumber() const;
+  const std::string& getDarkestSecret() const;
 
-  // Setters
-  void setFirstName(const char& first_name);
-  void setLastName(const char& last_name);
-  void setNickname(const char& nickname);
-  void setPhoneNumber(int phone_number);
-  void setDarkestSecret(const char& darkest_secret);
+  void setFirstName(const std::string& first_name);
+  void setLastName(const std::string& last_name);
+  void setNickname(const std::string& nickname);
+  void setPhoneNumber(const std::string& phone_number);
+  void setDarkestSecret(const std::string& darkest_secret);
 
-/*
-  Private Functions
-*/
+ // Private member-variaBles
 private:
-  void  freeAndSetString(char *dst, const char& src);
-
-/*
-  Private member-variaBles
-*/
-private:
-  char *first_name_;
-  char *last_name_;
-  char *nickname_;
-  int phone_number_;
-  char *darkest_secret_;
+  std::string first_name_;
+  std::string last_name_;
+  std::string nickname_;
+  std::string phone_number_;
+  std::string darkest_secret_;
 };
 
 #endif	// CONTACT_H

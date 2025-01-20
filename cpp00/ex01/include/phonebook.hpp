@@ -1,27 +1,30 @@
 #ifndef PHONEBOOK_H
 #define PHONEBOOK_H
 
-#include "contact.hpp"
+#include "Contact.hpp"
+
+#define MAX_CONTACTS 8
 
 class PhoneBook {
-/*
-  Public class functions/constructors and destructors
-*/
 public:
-  PhoneBook() = default;
-  ~PhoneBook() = default;
+  // Constructor
+  PhoneBook();
 
-  void  add();
-  void  search();
-  void  exit();
+  // Public member functions
+  void add(Contact& contact);
+  void listContacts() const;
+  bool displayContact(int contact_index) const;
+  int getContactsAmount() const;
 
 private:
-  bool  askStringInput(const std::string& ask, std::string& result);
+  // Private functions
+  void printTrunc(const std::string& str, int width) const;
 
-private:
-  const int max_contact_index_;
-  int current_contact_index;
-  Contact contacts_[8];
+  // Private member variables
+  const int max_contacts_;
+  int contacts_added_;
+  int contacts_index_;
+  Contact contacts_[MAX_CONTACTS];
 };
 
 #endif  // PHONEBOOK_H

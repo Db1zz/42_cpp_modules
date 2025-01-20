@@ -1,0 +1,23 @@
+NAME = fixed
+COMPILER = c++ -std=c++98
+COMPILER_FLAGS = -Wall -Wextra -Werror -g
+
+SOURCES =	main.cpp \
+			Fixed.cpp
+
+OBJCECTS = $(SOURCES:.cpp=.o)
+
+all: $(NAME)
+
+$(NAME): $(SOURCES)
+	$(COMPILER) $(COMPILER_FLAGS) $(SOURCES) -o $(NAME)
+
+clean:
+	rm -rf $(OBJCECTS)
+
+fclean: clean
+	rm -rf $(NAME)
+
+re: fclean all
+
+.PHONY: all clean fclean re

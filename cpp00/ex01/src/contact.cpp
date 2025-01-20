@@ -1,58 +1,55 @@
-#include "contact.hpp"
-#include <cstring>
+#include "Contact.hpp"
 
-Contact::~Contact() {
-  delete[] first_name_;
-  delete[] last_name_;
-  delete[] nickname_;
-  delete[] darkest_secret_;
+Contact::Contact() {}
+
+Contact::Contact(
+	const std::string &first_name,
+	const std::string &last_name,
+	const std::string &nickname,
+	const std::string &phone_number,
+	const std::string &darkest_secret)
+	: first_name_(first_name),
+	  last_name_(last_name),
+	  nickname_(nickname),
+	  phone_number_(phone_number),
+	  darkest_secret_(darkest_secret) {}
+
+const std::string& Contact::getFirstName() const {
+  return first_name_;
 }
 
-const char* Contact::getFirstName(void) const {
-  return first_name_ ? first_name_ : "";
+const std::string& Contact::getLastName() const {
+  return last_name_;
 }
 
-const char* Contact::getLastName(void) const {
-  return last_name_ ? last_name_ : "";
+const std::string& Contact::getNickname() const {
+  return nickname_;
 }
 
-const char* Contact::getNickname(void) const {
-  return nickname_ ? nickname_ : "";
+const std::string& Contact::getPhoneNumber() const {
+  return phone_number_;
 }
 
-const int* Contact::getPhoneNumber(void) const {
-  return phone_number_ ? &phone_number_ : 0;
+const std::string& Contact::getDarkestSecret() const {
+  return darkest_secret_;
 }
 
-const char* Contact::getDarkestSecret(void) const {
-  return darkest_secret_ ? darkest_secret_ : "";
+void Contact::setFirstName(const std::string& first_name) {
+  first_name_ = first_name;
 }
 
-void  Contact::freeAndSetString(char *dst, const char& src) {
-  if (dst) {
-    delete[] dst;
-    dst = nullptr;
-	}
-  dst = new char[strlen(&src) + 1];
-  strcpy(dst, &src);
+void Contact::setLastName(const std::string& last_name) {
+  last_name_ = last_name;
 }
 
-void Contact::setFirstName(const char &first_name) {
-  freeAndSetString(first_name_, first_name);
+void Contact::setNickname(const std::string& nickname) {
+  nickname_ = nickname;
 }
 
-void Contact::setLastName(const char &last_name) {
-  freeAndSetString(last_name_, last_name);
-}
-
-void Contact::setNickname(const char &nickname) {
-  freeAndSetString(nickname_, nickname);
-}
-
-void Contact::setPhoneNumber(int phone_number) {
+void Contact::setPhoneNumber(const std::string& phone_number) {
   phone_number_ = phone_number;
 }
 
-void Contact::setDarkestSecret(const char &darkest_secret) {
-  freeAndSetString(darkest_secret_, darkest_secret);
+void Contact::setDarkestSecret(const std::string& darkest_secret) {
+  darkest_secret_ = darkest_secret;
 }
