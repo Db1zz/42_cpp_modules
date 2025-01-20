@@ -14,7 +14,7 @@ void print_capital_char_matrix(char **to_print)
 int main(int ac, char **av)
 {
   if (ac == 1)
-    std::cout << "* LOUD AND UNBEARABLE FEEDBACK NOISE *" << std::endl;
+    std::cout << "* LOUD AND UNBEARABLE FEEDBACK NOISE *";
   else
     print_capital_char_matrix(av + 1);
   std::cout << std::endl;
