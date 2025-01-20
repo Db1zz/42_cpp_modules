@@ -5,6 +5,8 @@
 #include <cstdlib>
 #include <iomanip>
 
+#define FIELD_WIDTH 10
+
 PhoneBook::PhoneBook()
   : max_contacts_(MAX_CONTACTS), contacts_added_(0), contacts_index_(0) {}
 
@@ -16,31 +18,26 @@ void PhoneBook::add(Contact& contact) {
   }
 }
 
-void PhoneBook::printTrunc(const std::string& str, int width) const {
-  int str_len = static_cast<int>(str.length());
-  int blank_len = width - str_len;
-
-  blank_len = blank_len > 0 ? blank_len : 0;
-  while (blank_len-- > 0) {
-    std::cout << ' ';
-  }
-  if (str_len > width) {
-    std::cout << str.substr(0, width - blank_len - 1) << '*';
+void PhoneBook::printTrunc(const std::string& str) const {
+  if (str.size() < FIELD_WIDTH) {
+      std::cout << std::right << std::setfill(' ')
+                << std::setw(FIELD_WIDTH) << str;
   } else {
-    std::cout << str;
+    std::cout << std::right << std::setfill(' ')
+              << std::setw(FIELD_WIDTH)
+              << str.substr(0, FIELD_WIDTH - 1) + ".";
   }
 }
 
-#define FIELD_WIDTH 10
 void PhoneBook::listContacts() const {
   std::cout << "     Index|" << " FirstName|" << "  LastName|" << "  NickName\n";
   for (int index = 0; index < contacts_added_; index++) {
-    std::cout << std::setw(10) << index << "|";
-    printTrunc(contacts_[index].getFirstName(), FIELD_WIDTH);
+    std::cout << std::setw(FIELD_WIDTH) << index << "|";
+    printTrunc(contacts_[index].getFirstName());
     std::cout << "|";
-    printTrunc(contacts_[index].getLastName(), FIELD_WIDTH);
+    printTrunc(contacts_[index].getLastName());
     std::cout << "|";
-    printTrunc(contacts_[index].getNickname(), FIELD_WIDTH);
+    printTrunc(contacts_[index].getNickname());
     std::cout << std::endl;
   }
 }

@@ -8,7 +8,7 @@ typedef bool (*fValidator)(const std::string&);
 
 class UI {
 public:
-  static void clear_stream();
+  static void clearStream();
   static bool eof();
   static std::string askStringInput(const std::string& to_ask);
   static std::string askStringInput(const std::string& to_ask, fValidator validator);

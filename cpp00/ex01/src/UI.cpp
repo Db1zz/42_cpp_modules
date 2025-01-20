@@ -1,9 +1,10 @@
 #include "UI.hpp"
 #include <iostream>
+#include <cstdio>
 
 bool UI::eof_ = false;
 
-void UI::clear_stream() {
+void UI::clearStream() {
   std::cin.clear();
   clearerr(stdin);
   eof_ = false;
@@ -18,7 +19,7 @@ std::string UI::askStringInput(const std::string& to_ask) {
 
   if (eof_ == true)
     return "";
-  while (user_input.empty()) {
+  while (!std::cin.eof() && user_input.empty()) {
     std::cout << to_ask;
     std::getline(std::cin, user_input);
   }

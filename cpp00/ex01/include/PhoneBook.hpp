@@ -18,7 +18,7 @@ public:
 
 private:
   // Private functions
-  void printTrunc(const std::string& str, int width) const;
+  void printTrunc(const std::string& str) const;
 
   // Private member variables
   const int max_contacts_;

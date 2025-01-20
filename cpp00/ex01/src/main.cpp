@@ -5,6 +5,7 @@
 #include <string>
 #include <stdio.h>
 #include <unistd.h>
+#include <cstdlib>
 
 bool validate_phone_number(const std::string& phone_number) {
   PhoneNumberValidator validator;
@@ -23,7 +24,7 @@ void add_routine(PhoneBook& phone_book) {
   std::string darkest_secret = UI::askStringInput("Contact darkest secret: ");
   if (UI::eof()) {
     std::cout << "CTRL + D DETECED: ADD command will be skipped\n";
-    UI::clear_stream();
+    UI::clearStream();
     return;
   }
   Contact new_contact(first_name, last_name, nickname, phone_number, darkest_secret);
@@ -40,7 +41,7 @@ void search_routine(const PhoneBook& phone_book) {
     std::string user_input = UI::askStringInput("Choose contact by index: ");
     if (UI::eof()) {
       std::cout << "CTRL + D DETECED: Exiting search command\n";
-      UI::clear_stream();
+      UI::clearStream();
       break;
     }
     if (phone_book.displayContact(atoi(user_input.c_str()))) {
