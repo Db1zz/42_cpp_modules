@@ -1,4 +1,4 @@
-NAME = sed
+NAME = ex04
 COMPILER = c++ -std=c++98
 COMPILER_FLAGS = -Wall -Wextra -Werror
 

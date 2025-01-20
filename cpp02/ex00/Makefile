@@ -1,4 +1,4 @@
-NAME = fixed
+NAME = ex00
 COMPILER = c++ -std=c++98
 COMPILER_FLAGS = -Wall -Wextra -Werror
 
