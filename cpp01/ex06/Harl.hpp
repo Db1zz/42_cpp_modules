@@ -5,20 +5,29 @@
 
 class Harl {
 public:
-  bool complain(const std::string& level);
+  void complain(const std::string& level);
 
 private:
-#define MAX_SIZE 4
-  typedef void (Harl::*_func_p)();
+  enum _state{
+    DEBUG,
+    INFO,
+    WARNING,
+    ERROR,
+    TOTAL
+  };
+
   typedef struct {
-    _func_p _func;
-    std::string _name;
-  } _FunctionData;
+    _state state; 
+    std::string name;
+  } _StateData;
+
+  _state levelToState(const std::string& level);
 
   void debug();
   void info();
   void warning();
   void error();
+  void unknown();
 };
 
 #endif  // HARL_H

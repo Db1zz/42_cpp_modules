@@ -3,38 +3,60 @@
 #include <string>
 
 void Harl::debug() {
-  std::cout << "I love having extra bacon for my 7XL-double-cheese-triple-pickle-specialketchup burger. I really do!\n";
+  std::cout << "[ DEBUG ]\n"
+            << "I love having extra bacon for my "
+               "7XL-double-cheese-triple-pickle-specialketchup burger. I "
+               "really do!\n\n";
 }
 
 void Harl::info() {
-  std::cout << "I cannot believe adding extra bacon costs more money. You didn’t put enough bacon in my burger! If you did, I wouldn’t be asking for more!\n";
+  std::cout << "[ INFO ]\n"
+            << "I cannot believe adding extra bacon costs more money. You "
+               "didn’t put enough bacon in my burger! If you did, I wouldn’t "
+               "be asking for more!\n\n";
 }
 
 void Harl::warning() {
-  std::cout << "I think I deserve to have some extra bacon for free. I’ve been coming for years whereas you started working here since last month.\n";
+  std::cout << "[ WARNING ]\n"
+            << "I think I deserve to have some extra bacon for free. I’ve been "
+               "coming for years whereas you started working here since last "
+               "month.\n\n";
 }
 
 void Harl::error() {
-  std::cout << "This is unacceptable! I want to speak to the manager now.\n";
+  std::cout << "[ ERROR ]\n"
+            << "This is unacceptable! I want to speak to the manager now.\n\n";
 }
 
-bool Harl::complain(const std::string& level) {
-  static _FunctionData fncts[MAX_SIZE] = {
-    {&Harl::debug, "DEBUG"},
-    {&Harl::info, "INFO"},
-    {&Harl::warning, "WARNING"},
-    {&Harl::error, "ERROR"}
-  };
+void Harl::unknown() {
+  std::cout << "[ Probably complaining about insignificant problems ]\n";
+}
 
-  for (int i = 0; i < MAX_SIZE; i++) {
-    if (fncts[i]._name == level) {
-      for (int j = i; j < MAX_SIZE; j++) {
-        std::cout << "[ " << fncts[j]._name << " ]\n";
-        (this->*(fncts[j]._func))();
-        std::cout << '\n';
-      }
-      return true;
+Harl::_state Harl::levelToState(const std::string &level) {
+  const static _StateData data[] = {
+      {DEBUG, "DEBUG"}, {INFO, "INFO"}, {WARNING, "WARNING"}, {ERROR, "ERROR"}};
+  for (int i = 0; i < static_cast<int>(TOTAL); i++) {
+    if (level == data[i].name) {
+      return data[i].state;
     }
   }
-  return false;
+  return TOTAL;
+}
+
+void Harl::complain(const std::string &level) {
+  _state state = levelToState(level);
+
+  switch (state) {
+  case DEBUG:
+    debug();
+  case INFO:
+    info();
+  case WARNING:
+    warning();
+  case ERROR:
+    error();
+    break;
+  default:
+    unknown();
+  }
 }

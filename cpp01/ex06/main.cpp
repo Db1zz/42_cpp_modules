@@ -9,8 +9,6 @@ int main(int ac, char** av) {
     return EXIT_FAILURE;
   }
   Harl harl;
-  if (!harl.complain(std::string(av[1]))) {
-    std::cout << "[ Probably complaining about insignificant problems ]\n";
-  }
+  harl.complain(std::string(av[1]));
   return EXIT_SUCCESS;
 }
