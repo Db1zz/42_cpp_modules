@@ -16,11 +16,6 @@ private:
     TOTAL
   };
 
-  typedef struct {
-    _state state; 
-    std::string name;
-  } _StateData;
-
   _state levelToState(const std::string& level);
 
   void debug();

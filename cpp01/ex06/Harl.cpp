@@ -33,11 +33,11 @@ void Harl::unknown() {
 }
 
 Harl::_state Harl::levelToState(const std::string &level) {
-  const static _StateData data[] = {
-      {DEBUG, "DEBUG"}, {INFO, "INFO"}, {WARNING, "WARNING"}, {ERROR, "ERROR"}};
+  const static std::string states[] = {
+      "DEBUG", "INFO", "WARNING", "ERROR"};
   for (int i = 0; i < static_cast<int>(TOTAL); i++) {
-    if (level == data[i].name) {
-      return data[i].state;
+    if (level == states[i]) {
+      return static_cast<_state>(i); 
     }
   }
   return TOTAL;
