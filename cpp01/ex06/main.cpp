@@ -5,7 +5,7 @@
 
 int main(int ac, char** av) {
   if (ac != 2) {
-    std::cout << "Harl thinks that there's given too many arguments\n";
+    std::cout << "Harl thinks that there are too many arguments given\n";
     return EXIT_FAILURE;
   }
   Harl harl;
