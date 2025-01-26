@@ -49,7 +49,7 @@ void Character::equip(AMateria* materia) {
 }
 
 void Character::unequip(int idx) {
-  if (idx >= CHAR_INVENTORY_SIZE && idx < 0) {
+  if (idx >= CHAR_INVENTORY_SIZE || idx < 0) {
     return;
   } else if (!_inventory[idx]) {
     return;
@@ -60,7 +60,7 @@ void Character::unequip(int idx) {
 }
 
 void Character::use(int idx, ICharacter& target) {
-  if (idx >= CHAR_INVENTORY_SIZE && idx < 0) {
+  if (idx >= CHAR_INVENTORY_SIZE || idx < 0) {
     return;
   } else if (!_inventory[idx]) {
     return;
