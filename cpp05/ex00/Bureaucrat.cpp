@@ -3,13 +3,16 @@
 #include <sstream>
 #include <iostream>
 
-Bureaucrat::~Bureaucrat() {}
+Bureaucrat::Bureaucrat(const Bureaucrat& bur)
+  : _grade(bur._grade), _name(bur._name) {}
 
 Bureaucrat::Bureaucrat(const std::string &name, int grade)
   : _grade(grade), _name(name)
 {
   _validate_grade();
 }
+
+Bureaucrat::~Bureaucrat() {}
 
 const std::string& Bureaucrat::getName() const {
   return _name;

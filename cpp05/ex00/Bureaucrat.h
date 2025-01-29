@@ -8,7 +8,8 @@
 
 class Bureaucrat {
 public:
-  Bureaucrat(const std::string &name, int grade);
+  Bureaucrat(const Bureaucrat& bur);
+  Bureaucrat(const std::string &name="Aboba)", int grade=150);
   ~Bureaucrat();
 
   const std::string& getName() const;
