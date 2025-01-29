@@ -11,11 +11,11 @@ Bureaucrat::Bureaucrat(const std::string &name, int grade)
   _validate_grade();
 }
 
-const std::string& Bureaucrat::getName() {
+const std::string& Bureaucrat::getName() const {
   return _name;
 }
 
-int Bureaucrat::getGrade() {
+int Bureaucrat::getGrade() const {
   return _grade;
 }
 
@@ -42,6 +42,6 @@ void Bureaucrat::_validate_grade()
   }
 }
 
-std::ostream& Bureaucrat::operator<<(std::ostream& os) {
-  return os << _name << ", bureaucrat grade: " << _grade;
+std::ostream &operator<<(std::ostream &os, const Bureaucrat &bur) {
+  return os << bur.getName() << ", bureaucrat grade: " << bur.getGrade();
 }

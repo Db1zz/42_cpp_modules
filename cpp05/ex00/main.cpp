@@ -3,6 +3,8 @@
 
 int main() {
   Bureaucrat bur("Aboba", 1);
-  bur << std::cout << "WAS?\n";
+  std::cout << bur << '\n';
+  bur.decrement();
+  std::cout << bur << '\n';
 	return 0;
 }

@@ -11,13 +11,11 @@ public:
   Bureaucrat(const std::string &name, int grade);
   ~Bureaucrat();
 
-  const std::string& getName();
-  int getGrade();
+  const std::string& getName() const;
+  int getGrade() const;
 
   void increment();
   void decrement();
-
-  std::ostream& operator<<(std::ostream& os);
 
 private:
   void _validate_grade();
@@ -25,5 +23,7 @@ private:
   int _grade;
   const std::string _name;
 };
+
+std::ostream &operator<<(std::ostream &os, const Bureaucrat &bur);
 
 #endif  // BUREAUCRAT_H
