@@ -1,10 +1,15 @@
 #include "Bureaucrat.hpp"
+#include "Form.hpp"
 #include <iostream>
 
 int main() {
-  Bureaucrat bur("SuperAboba", 1);
-  std::cout << bur << '\n';
-  bur.decrement();
-  std::cout << bur << '\n';
+  
+  {
+    Bureaucrat bur("SuperAboba", 1);
+    Form form("Abobu's upgrade", 0, 10);
+  }
+  {
+
+  }
 	return 0;
 }

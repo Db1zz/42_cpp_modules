@@ -1,7 +1,18 @@
 #include "Bureaucrat.hpp"
-#include <exception>
 #include <sstream>
 #include <iostream>
+
+bool Bureaucrat::validateGrade(int grade) {
+  if (grade < _GRADE_MAX) {
+    throw GradeTooHighException();
+  }
+  else if (grade > _GRADE_MIN) {
+    throw GradeTooLowException();
+  } else {
+    return true;
+  }
+  return false;
+}
 
 Bureaucrat::Bureaucrat(const Bureaucrat& bur)
   : _grade(bur._grade), _name(bur._name) {}
@@ -9,7 +20,11 @@ Bureaucrat::Bureaucrat(const Bureaucrat& bur)
 Bureaucrat::Bureaucrat(const std::string &name, int grade)
   : _grade(grade), _name(name)
 {
-  _validate_grade();
+  if (!validateGrade(_grade)) {
+    std::cout << "Error: Attempted to initialize class with invalid grade! "
+              << "Default grade " << _GRADE_MIN << " will be assigned." << std::endl;
+    _grade = _GRADE_MIN;
+  }
 }
 
 Bureaucrat::~Bureaucrat() {}
@@ -23,26 +38,23 @@ int Bureaucrat::getGrade() const {
 }
 
 void Bureaucrat::increment() {
-  _grade--;
-  _validate_grade();
+  if (validateGrade(_grade - 1)) {
+    _grade--;
+  }
 }
 
 void Bureaucrat::decrement() {
-  _grade++;
-  _validate_grade();
+  if (validateGrade(_grade + 1)) {
+    _grade++;
+  }
 }
 
-void Bureaucrat::_validate_grade() 
-{
-  try {
-    if (_grade < _GRADE_MAX)
-      throw std::runtime_error(std::string("Bureaucrat::GradeTooHighException"));
-    else if (_grade > _GRADE_MIN) {
-      throw std::runtime_error(std::string("Bureaucrat::GradeTooLowException"));
-    }
-  } catch (std::exception &exception) {
-      std::cout << exception.what() << std::endl;
-  }
+const char *Bureaucrat::GradeTooHighException::what() const throw() {
+  return "Exception throwed: Grade is too high";
+}
+
+const char *Bureaucrat::GradeTooLowException::what() const throw() {
+  return "Exception throwed: Grade is too low";
 }
 
 std::ostream &operator<<(std::ostream &os, const Bureaucrat &bur) {

@@ -2,6 +2,7 @@
 # define BUREAUCRAT_H
 
 # include <string>
+# include <exception>
 
 # define _GRADE_MAX 1
 # define _GRADE_MIN 150 
@@ -18,9 +19,19 @@ public:
   void increment();
   void decrement();
 
-private:
-  void _validate_grade();
+  class GradeTooHighException : public std::exception {
+  public:
+    const char *what() const throw();
+  };
 
+  class GradeTooLowException : public std::exception {
+  public:
+    const char *what() const throw();
+  };
+
+  static bool validateGrade(int grade);
+
+private:
   int _grade;
   const std::string _name;
 };
