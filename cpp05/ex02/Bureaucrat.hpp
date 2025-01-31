@@ -4,7 +4,7 @@
 # include <string>
 # include <exception>
 
-class Form;
+class AForm;
 
 class Bureaucrat {
 public:
@@ -18,7 +18,7 @@ public:
   void IncrementGrade();
   void DecrementGrade();
 
-  void SignForm(Form &form);
+  void SignForm(AForm &form);
 
   class GradeTooHighException : public std::exception {
   public:

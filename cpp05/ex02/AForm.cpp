@@ -1,8 +1,7 @@
-#include "Form.hpp"
-#include "Bureaucrat.hpp"
+#include "AForm.hpp"
 #include <iostream>
 
-Form::Form(
+AForm::AForm(
   const std::string &name,
   int req_grade_to_sign,
   int req_grade_to_execute)
@@ -14,33 +13,33 @@ Form::Form(
   ValidateRequiredGrades();
 }
 
-Form::Form(const Form &form)
+AForm::AForm(const AForm &form)
 	: name_(form.name_), 
     req_grade_to_execute_(form.req_grade_to_execute_),
     req_grade_to_sign_(form.req_grade_to_sign_),
     is_signed_(form.is_signed_) {}
 
-Form::~Form() {}
+AForm::~AForm() {}
 
-const std::string &Form::GetName() const {
+const std::string &AForm::GetName() const {
   return name_;
 }
 
-int Form::GetReqGradeToSign() const {
+int AForm::GetReqGradeToSign() const {
   return req_grade_to_sign_;
 }
 
-int Form::GetReqGradeToExecute() const {
+int AForm::GetReqGradeToExecute() const {
   return req_grade_to_execute_;
 }
 
-bool Form::IsSigned() const {
+bool AForm::IsSigned() const {
   return is_signed_;
 }
 
-void Form::BeSigned(const Bureaucrat &bur) {
+void AForm::BeSigned(const Bureaucrat &bur) {
   if (is_signed_) {
-    throw SignSignedFormException();
+    throw SignSignedAFormException();
   }
   if (!IsBureaucratValid(bur.GetGrade())) {
     throw GradeTooLowException();
@@ -48,19 +47,19 @@ void Form::BeSigned(const Bureaucrat &bur) {
   is_signed_ = true;
 }
 
-const char *Form::GradeTooHighException::what() const throw() {
+const char *AForm::GradeTooHighException::what() const throw() {
   return "Grade is too high";
 }
 
-const char *Form::GradeTooLowException::what() const throw() {
+const char *AForm::GradeTooLowException::what() const throw() {
   return "Grade is too low";
 }
 
-const char *Form::SignSignedFormException::what() const throw() {
+const char *AForm::SignSignedAFormException::what() const throw() {
   return "Attempted to sign an already signed form";
 }
 
-void Form::ValidateRequiredGrades() const {
+void AForm::ValidateRequiredGrades() const {
   if (req_grade_to_execute_ > kGradeMin || req_grade_to_sign_ > kGradeMin) {
     throw GradeTooLowException();
   }
@@ -69,11 +68,11 @@ void Form::ValidateRequiredGrades() const {
   }
 }
 
-bool Form::IsBureaucratValid(int bureaucrat_grade) const {
+bool AForm::IsBureaucratValid(int bureaucrat_grade) const {
   return bureaucrat_grade <= req_grade_to_sign_;
 }
 
-std::ostream &operator<<(std::ostream &os, const Form &form) {
+std::ostream &operator<<(std::ostream &os, const AForm &form) {
   return os << "============== Form Data ==============\n"
             << "Name: " << form.GetName() << '\n'
             << "Is signed: " << form.IsSigned() << '\n'

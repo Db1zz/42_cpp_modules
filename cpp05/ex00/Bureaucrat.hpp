@@ -4,21 +4,17 @@
 # include <string>
 # include <exception>
 
-class Form;
-
 class Bureaucrat {
 public:
-  Bureaucrat(const Bureaucrat &bur);
+  Bureaucrat(const Bureaucrat& bur);
   Bureaucrat(const std::string &name="Aboba)", int grade=150);
   ~Bureaucrat();
 
-  const std::string &GetName() const;
+  const std::string& GetName() const;
   int GetGrade() const;
 
   void IncrementGrade();
   void DecrementGrade();
-
-  void SignForm(Form &form);
 
   class GradeTooHighException : public std::exception {
   public:

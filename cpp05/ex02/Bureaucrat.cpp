@@ -1,4 +1,5 @@
 #include "Bureaucrat.hpp"
+#include "AForm.hpp"
 #include <sstream>
 #include <iostream>
 
@@ -29,6 +30,16 @@ void Bureaucrat::IncrementGrade() {
 void Bureaucrat::DecrementGrade() {
   ValidateGrade(grade_ + 1);
   grade_++;
+}
+
+void Bureaucrat::SignForm(AForm &form) {
+  try {
+    form.BeSigned(*this);
+    std::cout << name_ << " signed " << form.GetName() << std::endl;
+  } catch (const std::exception &error) {
+    std::cout << name_ << " couldn't sign "
+              << form.GetName() << " because: " << error.what() << "\n";
+  }
 }
 
 const char *Bureaucrat::GradeTooHighException::what() const throw() {

@@ -1,19 +1,18 @@
 #ifndef FORM_H
-# define FORM_H
+#define FORM_H
 
-# include <string>
-# include <exception>
+#include "Bureaucrat.hpp"
+#include <string>
+#include <exception>
 
-class Bureaucrat;
-
-class Form {
+class AForm {
 public:
-  Form(const Form &form);
-  Form(
+  AForm(const AForm &form);
+  AForm(
     const std::string &name = "Default",
     int req_grade_to_sign = kGradeMax,
     int req_grade_to_execute = kGradeMax);
-  ~Form();
+  ~AForm();
 
   const std::string &GetName() const;
   int GetReqGradeToSign() const;
@@ -32,7 +31,7 @@ public:
     const char *what() const throw();
   };
 
-  class SignSignedFormException : public std::exception {
+  class SignSignedAFormException : public std::exception {
   public:
     const char *what() const throw();
   };
@@ -40,6 +39,7 @@ public:
 private:
   void ValidateRequiredGrades() const;
   bool IsBureaucratValid(int bureaucrat_grade) const;
+  AForm &operator=(const AForm &form);
 
   const std::string name_;
   const int req_grade_to_execute_;
@@ -50,6 +50,6 @@ private:
   static const int kGradeMax = 1;
 };
 
-std::ostream &operator<<(std::ostream &os, const Form &form);
+std::ostream &operator<<(std::ostream &os, const AForm &form);
 
 #endif  // FORM_H
