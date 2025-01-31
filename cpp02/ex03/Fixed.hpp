@@ -10,7 +10,7 @@ public:
   Fixed(const Fixed& f);
   ~Fixed();
   
-  void setRawBits(int const fixed);
+  void setRawBits(int fixed);
   int getRawBits() const;
   float toFloat() const;
   int toInt() const;
@@ -34,13 +34,15 @@ public:
   Fixed operator++(int);
   Fixed& operator--();
   Fixed operator--(int);
-  friend std::ostream& operator<<(std::ostream& os, const Fixed& c);
+
 private:
-  int float_to_fixed(float value) const ;
-  float fixed_to_float(int value) const ;
+  int float_to_fixed(float value) const;
+  float fixed_to_float(int value) const;
 
   int _fixed;
   static const int _frac_bit;
 };
+
+std::ostream& operator<<(std::ostream& os, const Fixed& c);
 
 #endif  // FIXED_HPP

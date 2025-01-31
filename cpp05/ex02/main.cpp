@@ -1,8 +1,12 @@
 #include "Bureaucrat.hpp"
 #include "AForm.hpp"
 #include <iostream>
+#include <assert.h>
 
 int main() {
+  int grade = 0;
+  const int kGradeMax = 1;
+  assert(grade <= kGradeMax);
 
   try {
     Bureaucrat bur("SuperAboba", 1);

@@ -1,5 +1,5 @@
 #ifndef SHRUBBERY_CREATION_FORM_H
-#define SHRUBBERY_CREATION_FORM_HH
+#define SHRUBBERY_CREATION_FORM_H
 
 #include "AForm.hpp"
 
@@ -8,7 +8,7 @@ public:
   ShrubberyCreationForm();
   ~ShrubberyCreationForm();
 
-  void ExecuteForm() const;
+  void Execute(const Bureaucrat &bureaucrat) const;
 
 private:
   ShrubberyCreationForm &operator=(const ShrubberyCreationForm &form);
@@ -17,4 +17,4 @@ private:
   static const int kExecGrade = 137;
 };
 
-#endif  // SHRUBBERY_CREATION_FORM_HH
+#endif  // SHRUBBERY_CREATION_FORM_H  

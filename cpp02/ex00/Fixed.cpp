@@ -19,7 +19,7 @@ Fixed::Fixed(const Fixed& f)
   std::cout << "Copy constructor called\n";
 }
 
-void Fixed::setRawBits(int const fixed) {
+void Fixed::setRawBits(int fixed) {
   std::cout << "setRawBits member function called\n";
   _fixed = fixed;
 }

@@ -36,7 +36,7 @@ int Fixed::getRawBits() const {
 }
 
 float Fixed::toFloat() const {
-  return (float)_fixed / (1 << _frac_bit);
+  return static_cast<float>(_fixed) / (1 << _frac_bit);
 }
 
 int Fixed::toInt() const {

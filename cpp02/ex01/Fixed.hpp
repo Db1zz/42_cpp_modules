@@ -10,15 +10,16 @@ public:
   Fixed(const Fixed& f);
   ~Fixed();
   
-  void setRawBits(int const fixed);
+  void setRawBits(int fixed);
   int getRawBits() const;
   float toFloat() const;
   int toInt() const;
   Fixed& operator=(const Fixed& f);
-  friend std::ostream& operator<<(std::ostream& os, const Fixed& c);
 private:
   int _fixed;
   static const int _frac_bit;
 };
+
+std::ostream& operator<<(std::ostream& os, const Fixed& c);
 
 #endif  // FIXED_HPP
