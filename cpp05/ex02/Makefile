@@ -3,7 +3,8 @@ COMPILER = c++ -std=c++98
 COMPILER_FLAGS = -Wall -Wextra -Werror
 
 SOURCES =	Bureaucrat.cpp	\
-			Form.cpp	\
+			AForm.cpp	\
+			ShrubberyCreationForm.cpp	\
 			main.cpp	\
 
 OBJCECTS = $(SOURCES:.cpp=.o)

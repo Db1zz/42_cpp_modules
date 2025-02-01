@@ -42,12 +42,22 @@ void Bureaucrat::SignForm(AForm &form) {
   }
 }
 
+void Bureaucrat::ExecuteForm(const AForm &form) const {
+  try {
+    form.Execute(*this);
+    std::cout << name_ << " executed " << form.GetName() << std::endl;
+  } catch (const std::exception &error) {
+    std::cout << name_ << " couldn't execute "
+              << form.GetName() << " because: " << error.what() << '\n';
+  }
+}
+
 const char *Bureaucrat::GradeTooHighException::what() const throw() {
-  return "Grade is too high";
+  return "Bureaucrat: Grade is too high";
 }
 
 const char *Bureaucrat::GradeTooLowException::what() const throw() {
-  return "Grade is too low";
+  return "Bureaucrat: Grade is too low";
 }
 
 void Bureaucrat::ValidateGrade(int grade) const {

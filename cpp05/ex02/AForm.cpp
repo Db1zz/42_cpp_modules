@@ -41,22 +41,30 @@ void AForm::BeSigned(const Bureaucrat &bur) {
   if (is_signed_) {
     throw SignSignedAFormException();
   }
-  if (!IsBureaucratValid(bur.GetGrade())) {
+  if (!CanSign(bur)) {
     throw GradeTooLowException();
   }
   is_signed_ = true;
 }
 
 const char *AForm::GradeTooHighException::what() const throw() {
-  return "Grade is too high";
+  return "Form: Grade is too high";
 }
 
 const char *AForm::GradeTooLowException::what() const throw() {
-  return "Grade is too low";
+  return "Form: Grade is too low";
 }
 
 const char *AForm::SignSignedAFormException::what() const throw() {
   return "Attempted to sign an already signed form";
+}
+
+const char *AForm::EmptyTargetNameException::what() const throw() {
+  return "Form: Target name is empty";
+}
+
+const char *AForm::UnsignedFormException::what() const throw() {
+  return "Form: Unsigned form cannot be executed";
 }
 
 void AForm::ValidateRequiredGrades() const {
@@ -68,8 +76,12 @@ void AForm::ValidateRequiredGrades() const {
   }
 }
 
-bool AForm::IsBureaucratValid(int bureaucrat_grade) const {
-  return bureaucrat_grade <= req_grade_to_sign_;
+bool AForm::CanSign(const Bureaucrat &bur) const {
+  return bur.GetGrade() <= req_grade_to_sign_;
+}
+
+bool AForm::CanExecute(const Bureaucrat &bur) const {
+  return bur.GetGrade() <= req_grade_to_execute_;
 }
 
 std::ostream &operator<<(std::ostream &os, const AForm &form) {

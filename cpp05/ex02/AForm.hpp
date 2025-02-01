@@ -37,9 +37,22 @@ public:
     const char *what() const throw();
   };
 
+  class EmptyTargetNameException : public std::exception {
+  public:
+    const char *what() const throw();
+  };
+
+  class UnsignedFormException : public std::exception {
+  public:
+    const char *what() const throw();
+  };
+
+protected:
+  bool CanSign(const Bureaucrat &bur) const;
+  bool CanExecute(const Bureaucrat &bur) const;
+
 private:
   void ValidateRequiredGrades() const;
-  bool IsBureaucratValid(int bureaucrat_grade) const;
   AForm &operator=(const AForm &form);
 
   const std::string name_;
