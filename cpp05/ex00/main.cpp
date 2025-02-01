@@ -2,13 +2,6 @@
 #include <iostream>
 
 int main() {
-  /*
-    {
-      Bureaucrat bur1("SuperAboba", 1);
-      Bureaucrat bur2("SuperAboba", 5);
-      bur1 = bur2;
-    }
-  */
   try {
     Bureaucrat bur("SuperAboba", 0);
   } catch (const std::exception &error) {
