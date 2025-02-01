@@ -6,31 +6,14 @@
 const std::string ShrubberyCreationForm::kFormName = "ShrubberyCreationForm";
 
 ShrubberyCreationForm::ShrubberyCreationForm(const std::string &target)
-  : AForm(kFormName, kSignGrade, kExecGrade), target_(target)
-{
-  CheckTargetName();
-}
+  : AForm(target, kFormName, kSignGrade, kExecGrade) {}
 
 ShrubberyCreationForm::ShrubberyCreationForm(const ShrubberyCreationForm &form)
-  : AForm(kFormName, kSignGrade, kExecGrade), target_(form.target_)
-{
-  CheckTargetName();
-}
+  : AForm(form.target_, kFormName, kSignGrade, kExecGrade) {}
 
 ShrubberyCreationForm::~ShrubberyCreationForm() {}
 
-const std::string &ShrubberyCreationForm::GetTarget() const {
-  return target_;
-}
-
-void ShrubberyCreationForm::Execute(const Bureaucrat &bureaucrat) const {
-  if (!IsSigned()) {
-    throw UnsignedFormException();
-  }
-  if (!CanExecute(bureaucrat)) {
-    throw GradeTooLowException();
-  }
-
+void ShrubberyCreationForm::Enforcement() const {
   std::ifstream in_stream("Art.txt", std::ios::ate);
   std::ofstream out_stream(target_ + "_shrubbery");
   if (!out_stream.is_open() || !in_stream.is_open()) {
@@ -49,14 +32,4 @@ void ShrubberyCreationForm::Execute(const Bureaucrat &bureaucrat) const {
 
 const char *ShrubberyCreationForm::OpenFileException::what() const throw() {
   return "ShrubberyCreationForm: Cannot open a file";
-}
-
-void ShrubberyCreationForm::CheckTargetName() const {
-  try {
-    if (target_.empty()) {
-      throw EmptyTargetNameException();
-    }
-  } catch (const std::exception &error) {
-    std::cout << "Error! " << error.what() << std::endl;
-  }
 }

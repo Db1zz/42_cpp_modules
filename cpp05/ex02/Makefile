@@ -1,10 +1,12 @@
-NAME = ex01
+NAME = ex02
 COMPILER = c++ -std=c++98
 COMPILER_FLAGS = -Wall -Wextra -Werror
 
 SOURCES =	Bureaucrat.cpp	\
 			AForm.cpp	\
 			ShrubberyCreationForm.cpp	\
+			RobotomyRequestForm.cpp	\
+			PresidentialPardonForm.cpp	\
 			main.cpp	\
 
 OBJCECTS = $(SOURCES:.cpp=.o)

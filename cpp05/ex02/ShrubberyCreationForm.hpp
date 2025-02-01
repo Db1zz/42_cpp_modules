@@ -11,9 +11,7 @@ public:
   ShrubberyCreationForm(const ShrubberyCreationForm &form);
   ~ShrubberyCreationForm();
 
-  const std::string &GetTarget() const;
-
-  void Execute(const Bureaucrat &bureaucrat) const;
+  void Enforcement() const;
 
   class OpenFileException : public std::exception {
   public:
@@ -22,8 +20,6 @@ public:
 
 private:
   ShrubberyCreationForm &operator=(const ShrubberyCreationForm &form);
-  void CheckTargetName() const;
-  const std::string target_;
 
   static const int kSignGrade = 145;
   static const int kExecGrade = 137;

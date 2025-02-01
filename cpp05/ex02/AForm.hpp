@@ -8,10 +8,10 @@
 class AForm {
 public:
   AForm(const AForm &form);
-  AForm(
-    const std::string &name = "Default",
-    int req_grade_to_sign = kGradeMax,
-    int req_grade_to_execute = kGradeMax);
+  AForm(const std::string &target = "Target",
+        const std::string &name = "Name",
+        int req_grade_to_sign = kGradeMin,
+        int req_grade_to_execute = kGradeMin);
   ~AForm();
 
   const std::string &GetName() const;
@@ -20,7 +20,8 @@ public:
   bool IsSigned() const;
 
   void BeSigned(const Bureaucrat &bur);
-  virtual void Execute(const Bureaucrat &bureaucrat) const = 0;
+  void Execute(const Bureaucrat &bureaucrat) const;
+  virtual void Enforcement() const = 0;
 
   class GradeTooHighException : public std::exception {
   public:
@@ -37,19 +38,23 @@ public:
     const char *what() const throw();
   };
 
+  class UnsignedFormException : public std::exception {  public:
+    const char *what() const throw();
+  };
+
   class EmptyTargetNameException : public std::exception {
   public:
     const char *what() const throw();
   };
 
-  class UnsignedFormException : public std::exception {
-  public:
-    const char *what() const throw();
-  };
+  const std::string &GetTarget() const;
+
+  void ValidateName() const;
 
 protected:
   bool CanSign(const Bureaucrat &bur) const;
   bool CanExecute(const Bureaucrat &bur) const;
+  const std::string target_;
 
 private:
   void ValidateRequiredGrades() const;
