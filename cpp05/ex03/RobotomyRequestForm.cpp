@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <time.h>
+#include <ctime>
 
 const std::string RobotomyRequestForm::kFormName = "RobotomyRequestForm";
 

@@ -15,7 +15,7 @@ ShrubberyCreationForm::~ShrubberyCreationForm() {}
 
 void ShrubberyCreationForm::Enforcement() const {
   std::ifstream in_stream("Art.txt", std::ios::ate);
-  std::ofstream out_stream(target_ + "_shrubbery");
+  std::ofstream out_stream((target_ + "_shrubbery").c_str());
   if (!out_stream.is_open() || !in_stream.is_open()) {
     throw OpenFileException();
   }
