@@ -3,8 +3,6 @@
 #include <limits>
 
 int main() {  
-  // std::cout << (inf != inf) << std::endl;
-  ScalarConverter::Convert("");
-  // std::cout << std::numeric_limits<double>::max();
+  ScalarConverter::Convert("340282346638528859811704183484516925440");
   return 0;
 }

@@ -22,10 +22,13 @@ bool ScalarConverter::is_visible_char(char c) {
 
 void ScalarConverter::display_double_to_char(double d) {
   char c = static_cast<char>(d);
+  int i = static_cast<int>(d);
 
   std::cout << "char: ";
   if (!is_normal_double(d)) {
-    std::cout << "impossible\n";
+    std::cout << "Impossible\n";
+  } else if (i < CHAR_MIN || i > CHAR_MAX) {
+    std::cout << "Overflow\n";
   } else if (!is_visible_char(c)) {
     std::cout << "Non displayable\n";
   } else {
@@ -33,15 +36,14 @@ void ScalarConverter::display_double_to_char(double d) {
   }
 }
 
-/*
-  TODO: add check for INTMAX and INTMIN
-*/
 void ScalarConverter::display_double_to_int(double d) {
   int i = static_cast<int>(d);
 
   std::cout << "int: ";
   if (!is_normal_double(d)) {
     std::cout << "impossible\n";
+  } else if (d < INT_MIN || d > INT_MAX) {
+    std::cout << "Overflow\n";
   } else {
     std::cout << i << '\n';
   }
@@ -50,7 +52,7 @@ void ScalarConverter::display_double_to_int(double d) {
 void ScalarConverter::display_double_float(double d) {
   std::string point_zero = "";
   int i = static_cast<int>(d);
-  if (!(d - i > 0 || d - i < 0) && is_normal_double(d)) {
+  if (!(d - i != 0) && is_normal_double(d)) {
     point_zero = ".0";
   }
   std::cout << "float: " << static_cast<float>(d) << point_zero << "f\n";
