@@ -27,10 +27,8 @@ void ScalarConverter::display_double_to_char(double d) {
   int i = static_cast<int>(d);
 
   std::cout << "char: ";
-  if (!is_normal_double(d)) {
+  if ((i < CHAR_MIN || i > CHAR_MAX) || !is_normal_double(d)) {
     std::cout << "Impossible\n";
-  } else if (i < CHAR_MIN || i > CHAR_MAX) {
-    std::cout << "Overflow\n";
   } else if (!is_visible_char(c)) {
     std::cout << "Non displayable\n";
   } else {
@@ -42,36 +40,30 @@ void ScalarConverter::display_double_to_int(double d) {
   int i = static_cast<int>(d);
 
   std::cout << "int: ";
-  if (!is_normal_double(d)) {
+  if ((d > INT_MAX || d < INT_MIN) || !is_normal_double(d)) {
     std::cout << "Impossible\n";
-  } else if (d < INT_MIN || d > INT_MAX) {
-    std::cout << "Overflow\n";
   } else {
     std::cout << i << '\n';
   }
 }
 
-
+/*
+  TODO: add -inf and etc
+*/
 void ScalarConverter::display_double_to_float(double d) {
+  const double kEpsilon = 9e-6;
+  double d2 = static_cast<double>(static_cast<float>(d));
+
   std::cout << "float: ";
-  if (d > FLT_MAX || d < FLT_MIN) {
-    std::cout << "Overflow\n";
-  }
-  // } else if (d > INT_MAX || d < INT_MIN) {
-  //   std::cout << "Imposible\n";
-  // }
-  else {
+  if ((d > FLT_MAX || d < FLT_MIN) || std::fabs(d - d2) >= kEpsilon) {
+    std::cout << "Impossible\n";
+  } else {
     std::cout << std::fixed << static_cast<float>(d) << "f\n";
   }
 }
 
 void ScalarConverter::display_double(double d) {
-  std::cout << "double: ";
-  // if (d > ULLONG_MAX || d < LLONG_MIN) {
-  //   std::cout << "Impossible\n";
-  // } else {
-    std::cout << std::fixed << d << '\n';
-  // }
+  std::cout << "double: " << std::fixed << d << "\n";
 }
 
 void ScalarConverter::Convert(const std::string &literal) {
