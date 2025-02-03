@@ -4,6 +4,7 @@
 #include <cmath>
 #include <iomanip>
 #include <limits.h>
+#include <float.h>
 #include <sstream>
 
 bool ScalarConverter::is_normal_double(double val) {
@@ -50,40 +51,39 @@ void ScalarConverter::display_double_to_int(double d) {
   }
 }
 
-/*
-  Mantisa mask:
-  0000 0000 0111 1111 1111 1111 1111 1111 or 8,388,607
-  SEEE EEEE EMMM MMMM MMMM MMMM MMMM MMMM
-*/
 
-typedef unsigned long int uint64_t;
-
-int ScalarConverter::extract_precision(double val) {
-  static const uint64_t sign_mask = (1ULL << 63);
-  static const uint64_t exponent_mask = ((1ULL << 11) - 1) << 52;
-  static const uint64_t mantissa_mask = (1ULL << 52) - 1;
-
-  union {double d; uint64_t i;} value;
-  value.d = val;
-
-  /*
-    TODO
-  */
-  uint64_t sign_bits = (sign_mask & value.i) >> 63;
-  uint64_t exponent_bits = ((exponent_mask & value.i) << 1) >> 53;
-  uint64_t mantisa_bits = ((mantissa_mask & value.i) << 12) >> 12;
-
-  return val;
+void ScalarConverter::display_double_to_float(double d) {
+  std::cout << "float: ";
+  if (d > FLT_MAX || d < FLT_MIN) {
+    std::cout << "Overflow\n";
+  }
+  // } else if (d > INT_MAX || d < INT_MIN) {
+  //   std::cout << "Imposible\n";
+  // }
+  else {
+    std::cout << std::fixed << static_cast<float>(d) << "f\n";
+  }
 }
 
-void ScalarConverter::display_double_float(double d) {
-  std::cout << "float: " << static_cast<float>(d) << "f\n";
-  std::cout << "double: " << d  << '\n';
+void ScalarConverter::display_double(double d) {
+  std::cout << "double: ";
+  // if (d > ULLONG_MAX || d < LLONG_MIN) {
+  //   std::cout << "Impossible\n";
+  // } else {
+    std::cout << std::fixed << d << '\n';
+  // }
 }
 
 void ScalarConverter::Convert(const std::string &literal) {
   double d = atof(literal.c_str());
+
+  std::cout.precision(2);
+  if (d - static_cast<long long int>(d) == 0) {
+    std::cout.precision(1);
+  }
+
   display_double_to_char(d);
   display_double_to_int(d);
-  display_double_float(d);
+  display_double_to_float(d);
+  display_double(d);
 }
