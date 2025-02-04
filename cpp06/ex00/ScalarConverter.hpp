@@ -6,14 +6,17 @@
 class ScalarConverter {
 public:
   static void Convert(const std::string &literal);
-
 private:
-  static void display_double(double d);
-  static void display_double_to_float(double d);
-  static void display_double_to_int(double d);
-  static void display_double_to_char(double d);
-  static bool is_visible_char(char c);
-  static bool is_normal_double(double val);
+  static bool IsInputValid(const std::string &input);
+  static void DisplayDouble(double d);
+  static void DisplayDoubleToFloat(double d);
+  static void DisplayDoubleToInt(double d);
+  static void DisplayDoubleToChar(double d);
+  static bool IsVisibleChar(char c);
+  static bool IsNormalDouble(double val);
+  static bool DotChecker(int i, const std::string &input, bool dot_found, bool exp_found);
+  static bool DecimalChecker(int i, const std::string &input, bool dot_found, bool exp_found);
+  static bool ExponentChecker(int i, const std::string &input, bool dot_found, bool exp_found);
 
   ScalarConverter &operator=(const ScalarConverter &copy);
   ScalarConverter();
