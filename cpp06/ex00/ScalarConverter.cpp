@@ -25,7 +25,7 @@ bool ScalarConverter::DecimalChecker(int i, const std::string &input, bool dot_f
     return DotChecker(i, input, dot_found, exp_found);
   } else if (!exp_found && input[i] == 'e') {
     return ExponentChecker(i, input, dot_found, exp_found);
-  } else if (input[i] == '\0') {
+  } else if ((input[i] == 'f' && input[i + 1] == '\0') || input[i] == '\0') {
     return true;
   }
   return false;
@@ -48,9 +48,12 @@ bool ScalarConverter::ExponentChecker(int i, const std::string &input, bool dot_
 /*
   TODO: add handlers for char, inf nan and etc, default float
 */
-
 // 1.23123e123 1.7976931348623157e+308
 bool ScalarConverter::IsInputValid(const std::string &input) {  
+  if (input.size() == 1 && !isdigit(input[0])) {
+    return true;
+  }
+
   int i = 0;
   if (input[i] == '-' || input[i] == '+') {
     i++;
@@ -106,7 +109,7 @@ void ScalarConverter::DisplayDoubleToFloat(double d) {
   double d2 = static_cast<double>(static_cast<float>(d));
 
   std::cout << "float: ";
-  if (IsNormalDouble(d) && ((d > FLT_MAX || d < FLT_MIN) || std::fabs(d - d2) >= kEpsilon)) {
+  if ((IsNormalDouble(d) && (d > FLT_MAX || d < -FLT_MAX)) || std::fabs(d - d2) >= kEpsilon) {
     std::cout << "Impossible\n";
   } else {
     std::cout << std::fixed << static_cast<float>(d) << "f\n";
@@ -118,8 +121,8 @@ void ScalarConverter::DisplayDouble(double d) {
 }
 
 void ScalarConverter::Convert(const std::string &literal) {
-  double d = atof(literal.c_str());
-  if (!IsInputValid(literal)) {
+  double d = literal.size() == 1 ? literal[0] : atof(literal.c_str());
+  if (IsNormalDouble(d) && !IsInputValid(literal)) {
     std::cout << "Invalid input\n";
     return;
   }
@@ -128,7 +131,6 @@ void ScalarConverter::Convert(const std::string &literal) {
   if (d - static_cast<long long int>(d) == 0) {
     std::cout.precision(1);
   }
-
   DisplayDoubleToChar(d);
   DisplayDoubleToInt(d);
   DisplayDoubleToFloat(d);
