@@ -5,6 +5,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <iostream>
+#include <iostream>
 
 #define CAST_MSG(type_str) std::string("Successfully casted Base* -> " + type_str)
 
@@ -47,22 +48,20 @@ void identify(Base& r) {
     A a = dynamic_cast<A&>(r);
     type = "A&";
   } catch (std::bad_cast) {
-    is_failed = true;
-  }
-  try {
-    B b = dynamic_cast<B&>(r);
-    type = "B&";
-  } catch (std::bad_cast) {
-    is_failed = true;
-  }
-  try {
-    C c = dynamic_cast<C&>(r);
-    type = "C&";
-  } catch (std::bad_cast) {
-    is_failed = true;
-  }
+    try {
+      B b = dynamic_cast<B&>(r);
+      type = "B&";
+    } catch (std::bad_cast) {
+      try {
+        C c = dynamic_cast<C&>(r);
+          type = "C&";
+      } catch (std::bad_cast) {
+          is_failed = true;
+      }
+    }
+  } 
   if (is_failed) {
-    std::cout << "Failed to cast Base& to " << type << std::endl;
+    std::cout << "Failed to cast Base& to [A,B,C]" << std::endl;
   } else {
     std::cout << "Successfully casted Base& -> " << type << std::endl;
   }
