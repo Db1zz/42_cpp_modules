@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <vector>
 #include <exception>
+#include <iterator>
 
 class Span {
 public:
@@ -13,21 +14,23 @@ public:
   Span &operator=(const Span &copy);
 
   void AddNumber(int number);
+  void AddNumber();
 
   class NotEnoughSpace : public std::exception {
   public:
     const char *what() const throw();
   };
 
-  int ShortestSpan() const;
+  class ArrayTooSmall : public std::exception {
+  public:
+    const char *what() const throw();
+  };
+
+  int ShortestSpan();
   int LongestSpan() const;
 
 private:
-  uint32_t capacity_;
-  uint32_t size_;
   std::vector<int> numbers_;
-  int smallest_;
-  int biggest_;
 };
 
 #endif  // SPAN_HPP
