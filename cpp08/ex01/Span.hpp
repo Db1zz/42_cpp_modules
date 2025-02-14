@@ -5,6 +5,7 @@
 #include <vector>
 #include <exception>
 #include <iterator>
+#include <ostream>
 
 class Span {
 public:
@@ -13,11 +14,19 @@ public:
   ~Span();
   Span &operator=(const Span &copy);
 
-  void AddNumber(int number);
-  void AddNumber();
+  typedef std::vector<int>::const_iterator VecIntIt;
 
+  void AddNumber(int number);
+  void Insert(VecIntIt insert_it, VecIntIt range_begin, VecIntIt range_end);
+  void PushBack(const std::vector<int> &numbers);
+
+  VecIntIt Begin() const;
+  VecIntIt End() const;
+
+  void PrintVector();
+  
   class NotEnoughSpace : public std::exception {
-  public:
+    public:
     const char *what() const throw();
   };
 
