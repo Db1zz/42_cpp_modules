@@ -39,6 +39,7 @@ void Span::Insert(VecIntIt insert_it, VecIntIt range_begin, VecIntIt range_end) 
   if (range_end - range_begin + numbers_.size() > numbers_.capacity()) {
     throw NotEnoughSpace();
   }
+  // TODO: Make it work on linux.
   numbers_.insert(insert_it, range_begin, range_end);
 }
 

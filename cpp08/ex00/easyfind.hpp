@@ -17,7 +17,7 @@ void easyfind(const T &container, int value) {
   typename T::const_iterator it = std::find(container.begin(), container.end(), value);
   if (it == container.end())
     throw ObjectNotFound();
-  std::cout << "easyfind() just found value: " << value << std::endl;
+  std::cout << "easyfind() found this value: " << value << std::endl;
 }
 
 #endif // EASYFIND_HPP
