@@ -18,126 +18,30 @@
 template <typename T>
 class MutantStack : public std::stack<T> {
 public:
-  typedef typename std::stack<T>::container_type::iterator iterator;
-  typedef typename std::stack<T>::container_type::const_iterator const_iterator;
+  typedef typename std::stack<T>::container_type::iterator rev_iterator;
+  typedef typename std::stack<T>::container_type::reverse_iterator iterator;
+  typedef typename std::stack<T>::container_type::const_iterator const_rev_iterator;
+  typedef typename std::stack<T>::container_type::const_reverse_iterator const_iterator;
 
-  // typedef struct iterator {
-  //   /* Pre-defined types which are used by iterator */
-  //   using value_type = T;
-  //   using pointer = T*;
-  //   using reference = T&;
-  //   using difference_type = std::ptrdiff_t;
-  //   using iterator_category = std::random_access_iterator_tag;
-
-  //   iterator(std::ptrdiff_t ptr)
-  //     : ptr_(ptr) {}
-
-  //   /* Overloaded operators */
-  //   reference operator*() const {
-  //     return *ptr_;
-  //   }
-
-  //   pointer operator->() const {
-  //     return ptr_;
-  //   }
-
-  //   iterator &operator++() {
-  //     ++ptr;
-  //     return *this;
-  //   }
-
-  //   iterator operator++(int) {
-  //     iterator copy = *this;
-  //     ++ptr_;
-  //     return copy;
-  //   }
-
-  //   iterator &operator--() {
-  //     --ptr_;
-  //     return *this;
-  //   }
-
-  //   iterator operator--(int) {
-  //     iterator copy = *this;
-  //     ++ptr_;
-  //     return copy;
-  //   }
-
-  //   bool operator==(const iterator &it) {
-  //     return ptr_ == it.ptr_;
-  //   }
-
-  //   bool operator!=(const iterator &it) {
-  //     return ptr_ != it.ptr_;
-  //   }
-
-  //   bool operator>=(const iterator &it) {
-  //     return ptr_ >= it.ptr_;
-  //   }
-    
-  //   bool operator<=(const iterator &it) {
-  //     return ptr_ <= it.ptr_;
-
-  //   }
-
-  //   bool operator>(const iterator &it) {
-  //     return ptr_ > it.ptr_;
-  //   }
-    
-  //   bool operator<(const iterator &it) {
-  //     return ptr_ < it.ptr_;
-  //   }
-
-  //   iterator &operator=(const iterator &to_copy) {
-  //     ptr_ = to_copy.ptr_;
-  //     return *this;
-  //   }
-
-  //   iterator &operator=(const iterator &to_copy) {
-  //     ptr_ = to_copy.ptr_;
-  //     return *this;
-  //   }
-
-  //   iterator &operator+(const iterator &n) {
-  //     iterator copy = *this;
-  //     copy.ptr_ += n.ptr_;
-  //     return copy;
-  //   }
-
-  //   iterator &operator+(const difference_type &n) {
-  //     iterator copy = *this;
-  //     copy.ptr_ += n;
-  //     return copy;
-  //   }
-
-  //   iterator &operator-(const iterator &n) {
-  //     iterator copy = *this;
-  //     copy.ptr_ -= n.ptr_;
-  //     return copy;
-  //   }
-
-  //   iterator &operator-(const difference_type &n) {
-  //     iterator copy = *this;
-  //     copy.ptr_ -= n;
-  //     return copy;
-  //   }
-  //   pointer ptr_;
-  // }
+  /*
+    end - 0,1,2,3,4 - begin
+    ++ == --
+  */
 
   iterator begin() {
-    return this->c.begin();
+    return std::reverse_iterator<rev_iterator>(this->c.end());
   }
 
   iterator end() {
-    return this->c.end();
+    return std::reverse_iterator<rev_iterator>(this->c.begin());
   }
 
   const_iterator begin() const {
-    return this->c.begin();
+    return std::reverse_iterator<const_rev_iterator>(this->c.end());
   }
 
   const_iterator end() const {
-    return this->c.end();
+    return std::reverse_iterator<const_rev_iterator>(this->c.begin());
   }
 };
 

@@ -8,7 +8,7 @@ void test_mutant_stack(MutantStack<int> container) {
   container.push(17);
   std::cout << container.top() << std::endl;
   container.pop();
-  std::cout << container.size() << std::endl;
+  std::cout << "Size: " << container.size() << std::endl;
   container.push(3);
   container.push(5);
   container.push(737);
@@ -18,6 +18,8 @@ void test_mutant_stack(MutantStack<int> container) {
   MutantStack<int>::iterator ite = container.end();
   ++it;
   --it;
+  std::cout << "Front: " << container.top() << std::endl;
+  std::cout << "Iterator value: " << *ite << std::endl;
   while (it != ite) {
     std::cout << *it << std::endl;
     ++it;
@@ -31,7 +33,7 @@ void test_deque_based_containers(DeuqeContainer container) {
   container.push_front(17);
   std::cout << container.front() << std::endl;
   container.pop_front();
-  std::cout << container.size() << std::endl;
+  std::cout << "Size: " << container.size() << std::endl;
   container.push_front(3);
   container.push_front(5);
   container.push_front(737);
@@ -41,6 +43,7 @@ void test_deque_based_containers(DeuqeContainer container) {
   typename DeuqeContainer::iterator ite = container.end();
   ++it;
   --it;
+  std::cout << "Front: " << container.front() << std::endl;
   while (it != ite) {
     std::cout << *it << std::endl;
     ++it;
