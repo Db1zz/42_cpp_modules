@@ -6,13 +6,13 @@
 #include <cstddef> // #include <stddef.h>
 
 /*
-  Before implementing anything read this dolbayob na goshe:
+  Before implementing anything, read this dolbayob na Goshe:
 
   https://en.cppreference.com/w/cpp/container/stack#:~:text=The%20standard%20containers%20std%3A%3A,std%3A%3Adeque%20is%20used.
   https://en.cppreference.com/w/cpp/container/deque
 
   Vivody sdelany:
-  Stack based on std::deque contianer which has iterators, so we simply can use them.
+  Stack is based on the std::deque contianer, which has iterators, so we can simply use them.
 */
 
 template <typename T>

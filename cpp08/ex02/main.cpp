@@ -19,7 +19,6 @@ void test_mutant_stack(MutantStack<int> container) {
   ++it;
   --it;
   std::cout << "Front: " << container.top() << std::endl;
-  std::cout << "Iterator value: " << *ite << std::endl;
   while (it != ite) {
     std::cout << *it << std::endl;
     ++it;
