@@ -62,8 +62,8 @@ class BitcoinExchange {
 public:
 
 private:
-  DateTreeIt GetDateData(DateTree &date_tree, std::vector<int> date);
-  DateTreeIt GetDateData(DateTree &date_tree, std::vector<int> date, int index);
+  template <typename TreeBranch, int index>
+  int GetDateData(TreeBranch &date_tree, std::vector<int> date);
 
   bool AddValue(DateTree &date_tree, DateData date_data);
   bool RemoveValue(DateTree &date_tree, DateData date_data);
