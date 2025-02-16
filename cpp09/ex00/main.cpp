@@ -8,6 +8,5 @@ int main(int ac, char **av) {
   //   std::cout << "Error! Incorrect amount of arguments given to the program.\n"
   //             << "Try: ./" << PROGRAM_NAME << " input.txt" << std::endl;
   // }
-  SplitDate("2025-02-15");
   return 0;
-}
+} 

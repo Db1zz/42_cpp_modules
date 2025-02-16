@@ -32,22 +32,42 @@
   Year -> map -> Month -> map -> day -> std::pair<std::string, double>(date, value);
 */
 
+/*
+  Year - <int Year, map Month>
+  |___ Month <int Month, map Day>
+       |______Day <int Day, pair Data>
+              |_____ Data
+*/
+
 #include <map>
 #include <utility>
 #include <string>
 #include <vector>
 
-typedef typename std::pair<std::string, double> DateData;
-typedef typename std::multimap<int, std::multimap<int, std::multimap<int, DateData> > > DateTree;
+template <typename MapKey, typename MapValue, int MapDepth>
+struct Nest {
+  typedef std::multimap<MapKey, Nest<MapKey, MapValue, MapDepth - 1> > MapTree;
+};
+
+template <typename MapKey, typename MapValue>
+struct Nest<MapKey, MapValue, 0> {
+  typedef std::multimap<MapKey, MapValue> MapTree;
+};
+
+typedef std::pair<std::string, int> DateData;
+typedef Nest<int, DateData, 3>::MapTree DateTree;
+typedef DateTree::iterator DateTreeIt;
 
 class BitcoinExchange {
 public:
 
-
 private:
+  DateTreeIt GetDateData(DateTree &date_tree, std::vector<int> date);
+  DateTreeIt GetDateData(DateTree &date_tree, std::vector<int> date, int index);
+
   bool AddValue(DateTree &date_tree, DateData date_data);
   bool RemoveValue(DateTree &date_tree, DateData date_data);
-  
+
   std::vector<int> ExtractDateFromAString(const std::string &date);
 
   DateTree input_date_tree_;

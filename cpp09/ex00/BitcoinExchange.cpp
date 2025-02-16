@@ -7,10 +7,21 @@
 #define MONTH_INDEX 5
 #define DAY_INDEX 8
 
+DateTreeIt BitcoinExchange::GetDateData(DateTree &date_tree, std::vector<int> date) {
+  return GetDateData(date_tree, date, 3);
+}
+
+DateTreeIt BitcoinExchange::GetDateData(DateTree &date_tree, std::vector<int> date, int index) {
+  DateTreeIt it = date_tree.find(date[index]);
+  if (it == date_tree.end()) {
+    return it;
+  }
+  return GetDateData((*it).second, date, index - 1);
+}
+
 bool BitcoinExchange::AddValue(DateTree &date_tree, DateData date_data) {
   std::vector<int> date = ExtractDateFromAString(date_data.first);
 
-  
 }
 
 bool BitcoinExchange::RemoveValue(DateTree &date_tree, DateData date_data) {
