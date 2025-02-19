@@ -30,15 +30,15 @@ int BitcoinExchange::GetDateData(TreeBranch &date_tree, std::vector<int> date)
 }
 
 bool BitcoinExchange::AddValue(DateData date_data) {
-  std::vector<int> dates = ExtractDateFromAString(date_data.first);
+  // std::vector<int> dates = ExtractDateFromAString(date_data.first);
 
-  if (!Validate(date_data.first)
-    || (date_data.second < 0 || date_data.second > 100000))
-  {
-    date_tree_[dates[0]][dates[1]][dates[2]] = date_data;
-    return true;
-  }
-  return false;
+  // if (!Validate(date_data.first)
+  //   || (date_data.second < 0 || date_data.second > 100000))
+  // {
+  //   date_tree_[dates[0]][dates[1]][dates[2]] = date_data;
+  //   return true;
+  // }
+  // return false;
 }
 
 template <typename TreeBranch, int MapDepth>

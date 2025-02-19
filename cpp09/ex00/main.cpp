@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <sstream>
+
 
 std::vector<std::string> split(
   const std::string &str, const std::string &delim)
@@ -22,22 +24,20 @@ std::vector<std::string> split(
   return tokens;
 }
 
-bool is_number(const std::string &str) {
-  std::string::const_iterator it = str.begin();
+bool is_float(const std::string &str) {
+  float f;
 
-  while (it != str.end() && std::isdigit(*it)) {
-    ++it;
-  }
-
-  return !str.empty() && it == str.end();
+  std::istringstream iss(str);
+  iss >> std::noskipws >> f;
+  return iss.eof() && !iss.fail(); 
 }
 
-std::string load_file(const std::string &file_name, const std::string &delim)
+std::string load_file(const std::string &file_name)
 {
   std::ifstream fstream(file_name.c_str(), std::ios::ate);
 
   if (!fstream.is_open()) {
-    std::cout << "Cannot open data base" << std::endl;
+    std::cerr << "Cannot open data base: " << file_name << std::endl;
     return "";
   }
 
@@ -53,7 +53,7 @@ bool validate_date(const std::string &date) {
   std::vector<std::string> sd = split(date, "-");
   int year, month, day;
   
-  if (sd.size() != 3 || !is_number(sd[0]) || !is_number(sd[1]) || !is_number(sd[2])) {
+  if (sd.size() != 3 || !is_float(sd[0]) || !is_float(sd[1]) || !is_float(sd[2])) {
     return false;
   }
 
@@ -61,7 +61,7 @@ bool validate_date(const std::string &date) {
   month = atoi(sd[1].c_str());
   day = atoi(sd[2].c_str());
 
-  return (year < BTC_YEAR && year <= 2025)
+  return (year >= BTC_YEAR && year <= 2025)
       && (month >= 1 && month <= 12)
       && (day >= 1 && day <= 31);
 }
@@ -70,58 +70,76 @@ DateData extract_date_data(
   const std::string &d, size_t start, size_t end, const std::string &delim)
 {
   size_t pos = 0;
+  std::string key, val_str;
+  double value;
 
-  if (pos = d.find(delim, start), pos != std::string::npos) {
-    std::string key(d.begin() + start, d.begin() + pos);
-    double value = atof(std::string(d.begin() + pos, d.begin() + end).c_str());
-    return std::make_pair(key, value);
+  if (pos = d.find(delim, start), pos != std::string::npos && pos < end) {
+    key = std::string(d.begin() + start, d.begin() + pos);
+    val_str = std::string(d.begin() + pos + delim.length(), d.begin() + end);
+    value = atof(val_str.c_str());
+    if (is_float(val_str))
+      return std::make_pair(key, value);
   }
-  return std::make_pair("", 0);
+
+  return std::make_pair("", -1);
 }
 
-bool validate_file(
-  const std::string &data, const std::string &delim, double val_max)
-{
+bool validate_file(const std::string &data, const std::string &delim, double val_max) {
   if (data.empty()) {
-    std::cout << "Error! file is empty" << std::endl;
+    std::cerr << "Error! File is empty" << std::endl;
     return false;
   }
-  
-  size_t pos = 0, pos_delim = 0;
 
-  while (true) {
-    if (pos_delim = data.find('\n', pos), pos_delim == std::string::npos) {
-      pos_delim = data.end() - data.begin();
+  size_t newline_pos = data.find('\n');
+  if (newline_pos == std::string::npos) {
+    std::cerr << "Error! Invalid file format: missing header" << std::endl;
+    return false;
+  }
+
+  std::string header(data.begin(), data.begin() + newline_pos);
+  if (header != "date,exchange_rate" && header != "date | value") {
+    std::cerr << "Error! Invalid header: " << header << std::endl;
+    return false;
+  }
+
+  size_t pos = newline_pos + 1;
+
+  while (pos < data.size()) {
+    newline_pos = data.find('\n', pos);
+    if (newline_pos == std::string::npos) {
+      newline_pos = data.size();
     }
 
-    DateData date = extract_date_data(data, pos, pos_delim, delim);
-    pos = pos_delim + delim.length();
+    DateData date = extract_date_data(data, pos, newline_pos, delim);
+    pos = newline_pos + 1;
 
-    if (date.first == "date") {
-      continue;
-    } else if (date.first.empty() || !validate_date(date.first)
-      || (date.second < 0 || date.second > val_max))
-    {
+    if (date.first.empty() || !validate_date(date.first) || date.second < 0 || date.second > val_max) {
+      std::cerr << "Error! Invalid date or value in file." << std::endl;
       return false;
     }
   }
+
+  return true;
 }
 
 int main(int ac, char **av) {
   if (ac != 2) {
-    std::cout << "Error! Incorrect amount of arguments given to the program.\n"
+    std::cerr << "Error! Incorrect amount of arguments given to the program\n"
               << "Try: ./" << PROGRAM_NAME << " input.txt" << std::endl;
-  }
-
-  std::string input_file = load_file(std::string(av[1]), "|");
-  std::string db_file = load_file("data.csv", ",");
-  
-  if (!validate_file(input_file, " | ", 1000)
-    || !validate_file(db_file, ",", 100000))
-  {
     return -1;
   }
 
-  BitcoinExchange btc(db_file, input_file);
+  std::string input_file = load_file(std::string(av[1]));
+  std::string db_file = load_file("data.csv");
+  
+
+  if (!validate_file(input_file, " | ", 1000)
+    || !validate_file(db_file, ",", 100000))
+  {
+    std::cerr << "Error! One of the input files is not valid" << std::endl;
+    return -1;
+  }
+
+  // BitcoinExchange btc(db_file, input_file);
   return 0;
 } 
