@@ -1,77 +1,56 @@
 #ifndef BITCOIN_EXCHANGE_HPP
 # define BITCOIN_EXCHANGE_HPP
 
-# ifndef PROGRAM_NAME
-#  define PROGRAM_NAME "btc"
-# endif  // PROGRAM_NAME
+# define PROGRAM_NAME "btc"
+# define BTC_MIN 0
+# define BTC_MAX 100000
 
-/*
-  Ideas:
-    1. Nested maps or vector to quickly access date and value
-      - Efficiont but a bit complicated(ezy)
-    2. Comparing everysingle input date and db date
-      to find the similar or closest one.
-      - For every single date from the input file we have to
-        use costly iterations througth the db and perform expesnsive
-        atoi operations. Super easy to implement, but extremely stupid(lazy) 
-*/
-
-/*
-  Input Validator:
-  1. Date
-  2. Values (0...1000)
-  3. Empty lines|files
-
-  DB Validator:
-  1. Date
-  2. Price(Do we even need to check it?)
-
-  Store values from DB and user input - Nested maps:
-  the DB stores: date, price
-  input provides: date, value(n = 0...1000)
-  Year -> map -> Month -> map -> day -> std::pair<std::string, double>(date, value);
-*/
-
-/*
-  Year - <int Year, map Month>
-  |___ Month <int Month, map Day>
-       |______Day <int Day, pair Data>
-              |_____ Data
-*/
+# define BTC_YEAR 2009
+# define BTC_MONTH 1
+# define BTC_DAY 3
 
 #include <map>
 #include <utility>
 #include <string>
 #include <vector>
+#include <exception>
+
+typedef std::pair<std::string, double> DateData;
+typedef std::map<int, DateData> DayMap;
 
 template <typename MapKey, typename MapValue, int MapDepth>
-struct Nest {
-  typedef std::multimap<MapKey, Nest<MapKey, MapValue, MapDepth - 1> > MapTree;
+struct MapCreator {
+  typedef std::map<MapKey, typename MapCreator<MapKey, MapValue, MapDepth - 1>::type> type;
 };
 
 template <typename MapKey, typename MapValue>
-struct Nest<MapKey, MapValue, 0> {
-  typedef std::multimap<MapKey, MapValue> MapTree;
+struct MapCreator<MapKey, MapValue, 0> {
+  typedef std::map<MapKey, MapValue> type;
 };
 
-typedef std::pair<std::string, int> DateData;
-typedef Nest<int, DateData, 3>::MapTree DateTree;
-typedef DateTree::iterator DateTreeIt;
+typedef MapCreator<int, DateData, 2>::type DateTree;
 
 class BitcoinExchange {
 public:
+  BitcoinExchange(const std::string &db_file, const std::string &input_file);
+  ~BitcoinExchange();
 
-private:
-  template <typename TreeBranch, int index>
+  template <typename TreeBranch, int MapDepth>
   int GetDateData(TreeBranch &date_tree, std::vector<int> date);
 
-  bool AddValue(DateTree &date_tree, DateData date_data);
-  bool RemoveValue(DateTree &date_tree, DateData date_data);
+  bool AddValue(DateData date_data);
 
-  std::vector<int> ExtractDateFromAString(const std::string &date);
+  void DisplayMap();
 
-  DateTree input_date_tree_;
-  DateTree db_date_tree_;
+private:
+  template <typename TreeBranch, int MapDepth>
+  void PrintValues(TreeBranch &branch);
+
+  template <>
+  void PrintValues<DayMap, 0>(DayMap &branch);
+
+  DateTree date_tree_;
+  const int date_tree_size_;
 };
 
 #endif  // BITCOIN_EXCHANGE_HPP
