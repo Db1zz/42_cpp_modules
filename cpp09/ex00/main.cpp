@@ -71,7 +71,7 @@ DateData extract_date_data(
 {
   size_t pos = 0;
 
-  if (pos = d.find(delim, start); pos != std::string::npos) {
+  if (pos = d.find(delim, start), pos != std::string::npos) {
     std::string key(d.begin() + start, d.begin() + pos);
     double value = atof(std::string(d.begin() + pos, d.begin() + end).c_str());
     return std::make_pair(key, value);
@@ -89,8 +89,8 @@ bool validate_file(
   
   size_t pos = 0, pos_delim = 0;
 
-  while (pos_delim = data.find('\n', pos)) {    
-    if (pos_delim == std::string::npos) {
+  while (true) {
+    if (pos_delim = data.find('\n', pos), pos_delim == std::string::npos) {
       pos_delim = data.end() - data.begin();
     }
 
