@@ -5,7 +5,7 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
-
+#include <cstdlib>
 
 std::vector<std::string> split(
   const std::string &str, const std::string &delim)
@@ -84,7 +84,35 @@ DateData extract_date_data(
   return std::make_pair("", -1);
 }
 
-bool validate_file(const std::string &data, const std::string &delim, double val_max) {
+std::vector<int> extract_keys_from_date(const std::string &date) {
+  std::vector<int> year_month_day;
+  size_t pos = 0;
+
+  year_month_day.push_back(atoi(date.c_str()));
+  while ((pos = date.find('-', pos)) != std::string::npos) {
+    ++pos;
+    year_month_day.push_back(atoi(date.c_str() + pos));
+  }
+
+  return year_month_day;
+}
+
+template <typename Container>
+void add_date(Container &container, DateData &date_data) {
+  container.push_back(date_data);
+}
+
+template <>
+void add_date<DateTree>(DateTree &tree, DateData &date_data) {
+  std::vector<int> tree_keys = extract_keys_from_date(date_data.first);
+  tree[tree_keys[0]][tree_keys[1]][tree_keys[2]] = date_data;
+}
+
+template<typename Container>
+bool parse_file(
+  const std::string &data, const std::string &delim, Container &container)
+{
+
   if (data.empty()) {
     std::cerr << "Error! File is empty" << std::endl;
     return false;
@@ -113,10 +141,11 @@ bool validate_file(const std::string &data, const std::string &delim, double val
     DateData date = extract_date_data(data, pos, newline_pos, delim);
     pos = newline_pos + 1;
 
-    if (date.first.empty() || !validate_date(date.first) || date.second < 0 || date.second > val_max) {
+    if (date.first.empty() || !validate_date(date.first) || date.second < 0) {
       std::cerr << "Error! Invalid date or value in file." << std::endl;
       return false;
     }
+    add_date(container, date);
   }
 
   return true;
@@ -129,17 +158,20 @@ int main(int ac, char **av) {
     return -1;
   }
 
+  DateTree db_tree;
+  std::vector<DateData> input_vector;
+
   std::string input_file = load_file(std::string(av[1]));
   std::string db_file = load_file("data.csv");
   
-
-  if (!validate_file(input_file, " | ", 1000)
-    || !validate_file(db_file, ",", 100000))
+  if (!parse_file(input_file, " | ", input_vector)
+    || !parse_file(db_file, ",", db_tree))
   {
     std::cerr << "Error! One of the input files is not valid" << std::endl;
     return -1;
   }
 
-  // BitcoinExchange btc(db_file, input_file);
+  BitcoinExchange btc(db_tree, input_vector);
+  btc.Exchange();
   return 0;
 } 

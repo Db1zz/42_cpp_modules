@@ -31,26 +31,36 @@ struct MapCreator<MapKey, MapValue, 0> {
 typedef MapCreator<int, DateData, 2>::type DateTree;
 
 class BitcoinExchange {
-public:
-  BitcoinExchange(const std::string &db_file, const std::string &input_file);
+  public:
+  BitcoinExchange(const DateTree &db_tree, const std::vector<DateData> &input);
   ~BitcoinExchange();
 
   template <typename TreeBranch, int MapDepth>
-  int GetDateData(TreeBranch &date_tree, std::vector<int> date);
+  int GetDateValue(TreeBranch &date_tree, const std::vector<int> &tree_keys);
 
-  bool AddValue(DateData date_data);
-
-  void DisplayMap();
+  void Exchange();
 
 private:
-  template <typename TreeBranch, int MapDepth>
-  void PrintValues(TreeBranch &branch);
+  class NegativeNumberException : public std::exception {
+  public:
+    const char *what() const throw();
+  };
 
-  template <>
-  void PrintValues<DayMap, 0>(DayMap &branch);
+  class BigNumberException : public std::exception {
+    public:
+      const char *what() const throw();
+  };
 
-  DateTree date_tree_;
-  const int date_tree_size_;
+  class BadInputException : public std::exception {
+    public:
+      const char *what() const throw();
+  };
+
+  void IsDateDataValidInput(const DateData &date);
+
+  const int input_max_val_;
+  DateTree db_tree_;
+  std::vector<DateData> input_;
 };
 
 #endif  // BITCOIN_EXCHANGE_HPP
