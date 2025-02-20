@@ -5,6 +5,7 @@
 #include <fstream>
 #include <ctime>
 #include <climits>
+#include <limits>
 
 extern bool validate_date(const std::string &date);
 extern std::vector<int> extract_keys_from_date(const std::string &date);
@@ -27,15 +28,21 @@ BitcoinExchange::~BitcoinExchange() {
   lower date and not the upper one.
 */
 template <typename TreeBranch, int MapDepth>
-int BitcoinExchange::GetDateValue(TreeBranch &date_tree, const std::vector<int> &tree_keys)
+double BitcoinExchange::GetDateValue(TreeBranch &date_tree, const std::vector<int> &tree_keys)
 {
   typedef typename TreeBranch::mapped_type MappedType;
 
   typename TreeBranch::iterator branch_it = date_tree.find(tree_keys[MapDepth]);
   if (branch_it == date_tree.end()) {
     while (branch_it != date_tree.begin()) {
+      if (MapDepth == 2) {
+        double value = GetDateValue<MappedType, MapDepth + 1>(branch_it->second, tree_keys);
+        if (value == std::numeric_limits<double>::max()) {
+          continue;
+        }
+      }
       --branch_it;
-    }  
+    }
   }
   return GetDateValue<MappedType, MapDepth + 1>(branch_it->second, tree_keys);
 }
@@ -44,7 +51,11 @@ int BitcoinExchange::GetDateValue(TreeBranch &date_tree, const std::vector<int> 
   Base case for GetDateValue() template recursion lmao(IT'S SO CUTE, LUV IT)
 */
 template <>
-int BitcoinExchange::GetDateValue<DateData, 3>(DateData &data, const std::vector<int> &tree_keys) {
+double BitcoinExchange::GetDateValue<DateData, 3>(DateData &data, const std::vector<int> &tree_keys) {
+  tree_keys[0];
+  if (data.first.empty()) {
+    return std::numeric_limits<double>::max();
+  }
   return data.second;
 }
 
@@ -55,7 +66,7 @@ void BitcoinExchange::Exchange() {
     try {
       IsDateDataValidInput(date);
       std::vector<int> tree_keys = extract_keys_from_date(date.first);
-      int db_value = GetDateValue<DateTree, 0>(db_tree_, tree_keys);
+      double db_value = GetDateValue<DateTree, 0>(db_tree_, tree_keys);
 
       std::cout << date.first << " => " << date.second << " = "
                 << date.second * db_value <<  std::endl;

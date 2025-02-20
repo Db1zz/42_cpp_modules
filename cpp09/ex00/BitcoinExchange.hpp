@@ -36,7 +36,7 @@ class BitcoinExchange {
   ~BitcoinExchange();
 
   template <typename TreeBranch, int MapDepth>
-  int GetDateValue(TreeBranch &date_tree, const std::vector<int> &tree_keys);
+  double GetDateValue(TreeBranch &date_tree, const std::vector<int> &tree_keys);
 
   void Exchange();
 
