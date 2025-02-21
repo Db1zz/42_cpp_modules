@@ -5,7 +5,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <iostream>
-#include <iostream>
+#include <exception>
 
 #define CAST_MSG(type_str) std::string("Successfully casted Base* -> " + type_str)
 
@@ -47,15 +47,15 @@ void identify(Base& r) {
   try {
     A a = dynamic_cast<A&>(r);
     type = "A&";
-  } catch (std::bad_cast) {
+  } catch (const std::exception &e) {
     try {
       B b = dynamic_cast<B&>(r);
       type = "B&";
-    } catch (std::bad_cast) {
+    } catch (const std::exception &e) {
       try {
         C c = dynamic_cast<C&>(r);
           type = "C&";
-      } catch (std::bad_cast) {
+      } catch (const std::exception &e) {
           is_failed = true;
       }
     }
