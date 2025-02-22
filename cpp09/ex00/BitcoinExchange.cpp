@@ -28,21 +28,16 @@ BitcoinExchange::~BitcoinExchange() {
   lower date and not the upper one.
 */
 template <typename TreeBranch, int MapDepth>
-double BitcoinExchange::GetDateValue(TreeBranch &date_tree, const std::vector<int> &tree_keys)
+double BitcoinExchange::GetDateValue(
+  TreeBranch &date_tree, const std::vector<int> &tree_keys)
 {
   typedef typename TreeBranch::mapped_type MappedType;
 
   typename TreeBranch::iterator branch_it = date_tree.find(tree_keys[MapDepth]);
   if (branch_it == date_tree.end()) {
-    while (branch_it != date_tree.begin()) {
-      if (MapDepth == 2) {
-        double value = GetDateValue<MappedType, MapDepth + 1>(branch_it->second, tree_keys);
-        if (value == std::numeric_limits<double>::max()) {
-          continue;
-        }
-      }
-      --branch_it;
-    }
+    double val = 
+      GetDateValue<MappedType, MapDepth + 1>(date_tree.end()->second, tree_keys);
+    return val;
   }
   return GetDateValue<MappedType, MapDepth + 1>(branch_it->second, tree_keys);
 }
@@ -67,7 +62,7 @@ void BitcoinExchange::Exchange() {
       IsDateDataValidInput(date);
       std::vector<int> tree_keys = extract_keys_from_date(date.first);
       double db_value = GetDateValue<DateTree, 0>(db_tree_, tree_keys);
-
+      std::cout << "db_value: " << db_value << std::endl;
       std::cout << date.first << " => " << date.second << " = "
                 << date.second * db_value <<  std::endl;
     } catch (const std::exception &e) {

@@ -15,7 +15,12 @@
 #include <vector>
 #include <exception>
 
-typedef std::pair<std::string, double> DateData;
+typedef struct DateData {
+  std::string date_str;
+  std::vector<int> date_keys;
+  double value;
+};
+
 typedef std::map<int, DateData> DayMap;
 
 template <typename MapKey, typename MapValue, int MapDepth>

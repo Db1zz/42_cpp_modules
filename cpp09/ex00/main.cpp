@@ -102,10 +102,54 @@ void add_date(Container &container, DateData &date_data) {
   container.push_back(date_data);
 }
 
+template<typename TreeBranch, int MapDepth>
+void add_date(
+  TreeBranch &tree, DateData &date_data, const std::vector<int> &keys)
+{
+  typedef typename TreeBranch::mapped_type MappedType;
+  typedef typename TreeBranch::iterator BranchIt;
+  
+  BranchIt it = tree.find(keys[MapDepth]);
+  if (it != tree.end()) {
+    add_date<MappedType, MapDepth + 1>(it->second, date_data, keys);
+  } else {
+    std::pair<BranchIt, bool> ins_it =
+      tree.insert(std::make_pair(keys[MapDepth], MappedType()));
+    add_date<MappedType, MapDepth + 1>(ins_it.first->second, date_data, keys);
+  }
+}
+
+template <>
+void add_date<DayMap, 2>(
+  DayMap &day_map, DateData &date_data, const std::vector<int> &keys)
+{
+  DayMap::iterator it = day_map.find(keys[2]);
+  if (it == day_map.end()) {
+    day_map.insert(std::make_pair(keys[2], date_data));
+  }
+}
+
 template <>
 void add_date<DateTree>(DateTree &tree, DateData &date_data) {
   std::vector<int> tree_keys = extract_keys_from_date(date_data.first);
-  tree[tree_keys[0]][tree_keys[1]][tree_keys[2]] = date_data;
+  add_date<DateTree, 0>(tree, date_data, tree_keys);
+}
+
+template <typename TreeBranch, int MapDepth>
+void print_tree(const TreeBranch &tree) {
+  typedef typename TreeBranch::mapped_type MappedType;
+  typedef typename TreeBranch::const_iterator IT;
+
+  IT it = tree.begin();
+  while (it != tree.end()) {
+    print_tree<MappedType, MapDepth + 1>(it->second);
+    ++it;
+  }
+}
+
+template <>
+void print_tree<DateData, 3>(const DateData &date_data) {
+  std::cout << date_data.first << " " << date_data.second << std::endl;
 }
 
 template<typename Container>
@@ -170,7 +214,7 @@ int main(int ac, char **av) {
     std::cerr << "Error! One of the input files is not valid" << std::endl;
     return -1;
   }
-
+  print_tree<DateTree, 0>(db_tree);
   BitcoinExchange btc(db_tree, input_vector);
   btc.Exchange();
   return 0;
