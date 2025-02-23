@@ -9,6 +9,8 @@
 #include <limits>
 #include <exception>
 
+BitcoinExchange::BitcoinExchange() {};
+
 BitcoinExchange::BitcoinExchange(
   const std::string &db_buffer,
   const std::string &buffer_delimeter,
@@ -20,8 +22,24 @@ BitcoinExchange::BitcoinExchange(
   }
 }
 
+BitcoinExchange::BitcoinExchange(const BitcoinExchange &copy) {
+  std::cout << "BitcoinExchange copy constructor called\n";
+  *this = copy;
+}
+
 BitcoinExchange::~BitcoinExchange() {
   std::cout << "Default BitcoinExchange destructor called\n";
+}
+
+BitcoinExchange &BitcoinExchange::operator=(const BitcoinExchange &copy) {
+  std::cout << "BitcoinExchange copy operator called\n";
+
+  if (this == &copy) {
+    return *this;
+  }
+
+  db_dates_ = copy.db_dates_;
+  return *this;
 }
 
 size_t BitcoinExchange::checkBufferHeader(
@@ -52,8 +70,9 @@ bool BitcoinExchange::parseBuffer(
   const std::string &buffer,
   const std::string &buffer_delimeter,
   const std::string &buffer_header,
-  Container output_container)
+  Container &output_container)
 {
+  Date date;
   size_t newline_pos = 0;
   size_t pos = checkBufferHeader(buffer, buffer_header);
   if (pos == std::string::npos) {
@@ -65,14 +84,15 @@ bool BitcoinExchange::parseBuffer(
     if (newline_pos == std::string::npos) {
       newline_pos = buffer.size();
     }
+    if (newline_pos - pos > 1) {
+      date = extractDate(buffer, pos, newline_pos, buffer_delimeter);
 
-    Date date = extractDate(buffer, pos, newline_pos, buffer_delimeter);
-    pos = newline_pos + 1;
-
-    if (!addDate(output_container, date)) {
-      std::cerr << "Error! Invalid date or value in file." << std::endl;
-      return false;
+      if (!addDate(output_container, date)) {
+        std::cerr << "Error! Invalid date or value in file." << std::endl;
+        return false;
+      }
     }
+    pos = newline_pos + 1;
   }
 
   return true;
@@ -119,7 +139,7 @@ void BitcoinExchange::exchange(
 {
   std::vector<Date> input_dates;
   if (!parseBuffer(input_buffer, buffer_delimeter, buffer_header, input_dates)) {
-    throw std::runtime_error("aboba error");
+    return;
   }
 
   for (size_t i = 0; i < input_dates.size(); i++) {
@@ -153,7 +173,8 @@ Date BitcoinExchange::extractDate(
     date_keys = extractKeysFromDate(date_str);
     return Date(date_str, value_str, date_keys, date_value);
   }
-  return Date();
+  date_str = std::string(d.begin() + start, d.begin() + end);
+  return Date(date_str, "", std::vector<int>(), 0);
 }
 
 std::vector<int> BitcoinExchange::extractKeysFromDate(const std::string &date) {
@@ -186,12 +207,14 @@ bool BitcoinExchange::areKeysLessOrEqual(
 }
 
 void BitcoinExchange::isDateValidInput(const Date &date) {
-  if (date.date_value < 0) {
+  if (!validateDate(date.date_str)) {
+    throw std::runtime_error("Bad input => " + date.date_str);
+  } else if (!utils::isFloat(date.value_str)) {
+    throw std::runtime_error("Bad input => " + date.value_str);
+  } else if (date.date_value < 0) {
     throw std::runtime_error("Number is not positive");
   } else if (date.date_value > 1000) {
     throw std::runtime_error("Number is too big");
-  } else if (!validateDate(date.date_str)) {
-    throw std::runtime_error("Bad input => " + date.date_str);
   }
 }
 
@@ -228,7 +251,7 @@ template<typename TreeBranch, int MapDepth>
 bool BitcoinExchange::addDate(TreeBranch &tree, Date &date) {
   typedef typename TreeBranch::mapped_type MappedType;
   typedef typename TreeBranch::iterator BranchIt;
-  
+
   BranchIt it = tree.find(date.date_keys[MapDepth]);
   if (it != tree.end()) {
     return addDate<MappedType, MapDepth + 1>(it->second, date);

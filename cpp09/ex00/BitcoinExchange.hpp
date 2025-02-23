@@ -16,11 +16,14 @@
 
 class BitcoinExchange {
   public:
+  BitcoinExchange();
   BitcoinExchange(
     const std::string &db_buffer,
     const std::string &buffer_delimeter,
     const std::string &buffer_header);
+  BitcoinExchange(const BitcoinExchange &copy);
   ~BitcoinExchange();
+  BitcoinExchange &operator=(const BitcoinExchange &copy);
 
   void exchange(
     const std::string &input_buffer,
@@ -36,7 +39,7 @@ private:
     const std::string &buffer,
     const std::string &buffer_delimeter,
     const std::string &buffer_header,
-    Container output_container);
+    Container &output_container);
 
   Date extractDate(
     const std::string &d, size_t start, size_t end, const std::string &delim);

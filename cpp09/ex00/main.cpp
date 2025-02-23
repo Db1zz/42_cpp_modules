@@ -34,9 +34,13 @@ int main(int ac, char **av) {
 
   std::string input_buffer = load_file(std::string(av[1]));
   std::string db_buffer = load_file("data.csv");
+  BitcoinExchange test;
 
-  BitcoinExchange btc(db_buffer, "," ,"date,exchange_rate");
-  btc.exchange(input_buffer, " | ", "date | value");
+  {
+    BitcoinExchange btc(db_buffer, "," ,"date,exchange_rate");
+    test = btc;
+  }
+  test.exchange(input_buffer, " | ", "date | value");
 
   return 0;
-} 
+}
