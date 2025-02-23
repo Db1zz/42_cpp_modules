@@ -9,71 +9,58 @@
 # define BTC_MONTH 1
 # define BTC_DAY 3
 
-#include <map>
+#include "date_map.hpp"
 #include <utility>
 #include <string>
 #include <vector>
-#include <exception>
-
-struct Date {
-  std::string date_str;
-  std::vector<int> date_keys;
-  double date_value;
-
-  Date(const std::string &date_str,
-          const std::vector<int> &date_keys, double date_value)
-    : date_str(date_str), date_keys(date_keys), date_value(date_value) {};
-  Date() : date_str(""), date_keys(), date_value(0) {};
-};
-
-typedef std::map<int, Date> DayMap;
-
-template <typename MapKey, typename MapValue, int MapDepth>
-struct MapCreator {
-  typedef std::map<MapKey, typename MapCreator<MapKey, MapValue, MapDepth - 1>::type> type;
-};
-
-template <typename MapKey, typename MapValue>
-struct MapCreator<MapKey, MapValue, 0> {
-  typedef std::map<MapKey, MapValue> type;
-};
-
-typedef MapCreator<int, Date, 2>::type DateTree;
 
 class BitcoinExchange {
   public:
-  BitcoinExchange(const DateTree &db_tree, const std::vector<Date> &input);
+  BitcoinExchange(
+    const std::string &db_buffer,
+    const std::string &buffer_delimeter,
+    const std::string &buffer_header);
   ~BitcoinExchange();
 
-  template <typename TreeBranch, int MapDepth>
-  Date GetDate(TreeBranch &date_tree, const std::vector<int> &date_keys);
-
-  void Exchange();
-
-  class NegativeNumberException : public std::exception {
-  public:
-    const char *what() const throw();
-  };
-
-  class BigNumberException : public std::exception {
-    public:
-      const char *what() const throw();
-  };
-
-  class BadInputException : public std::exception {
-    public:
-      const char *what() const throw();
-  };
+  void exchange(
+    const std::string &input_buffer,
+    const std::string &buffer_delimeter,
+    const std::string &buffer_header);
 
 private:
-  bool AreKeysLessOrEqual(
+  size_t checkBufferHeader(
+    const std::string &buffer, const std::string &buffer_header);
+
+  template <typename Container>
+  bool parseBuffer(
+    const std::string &buffer,
+    const std::string &buffer_delimeter,
+    const std::string &buffer_header,
+    Container output_container);
+
+  Date extractDate(
+    const std::string &d, size_t start, size_t end, const std::string &delim);
+
+  std::vector<int> extractKeysFromDate(const std::string &date);
+
+  bool areKeysLessOrEqual(
     const std::vector<int> date_keys1, const std::vector<int> &date_keys2);
 
-  void IsDateValidInput(const Date &date);
+  void isDateValidInput(const Date &date);
 
-  const int input_max_val_;
-  DateTree db_tree_;
-  std::vector<Date> input_;
+  bool validateDate(const std::string &date);
+
+  bool addDate(std::vector<Date> &date_container, Date &date);
+
+  bool addDate(DateTree &date_tree, Date &date);
+
+  template<typename TreeBranch, int MapDepth>
+  bool addDate(TreeBranch &date_tree, Date &date);
+
+  template <typename TreeBranch, int MapDepth>
+  Date getDate(TreeBranch &date_tree, const std::vector<int> &date_keys);
+
+  DateTree db_dates_;
 };
 
 #endif  // BITCOIN_EXCHANGE_HPP
