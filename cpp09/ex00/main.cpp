@@ -66,24 +66,6 @@ bool validate_date(const std::string &date) {
       && (day >= 1 && day <= 31);
 }
 
-DateData extract_date_data(
-  const std::string &d, size_t start, size_t end, const std::string &delim)
-{
-  size_t pos = 0;
-  std::string key, val_str;
-  double value;
-
-  if (pos = d.find(delim, start), pos != std::string::npos && pos < end) {
-    key = std::string(d.begin() + start, d.begin() + pos);
-    val_str = std::string(d.begin() + pos + delim.length(), d.begin() + end);
-    value = atof(val_str.c_str());
-    if (is_float(val_str))
-      return std::make_pair(key, value);
-  }
-
-  return std::make_pair("", -1);
-}
-
 std::vector<int> extract_keys_from_date(const std::string &date) {
   std::vector<int> year_month_day;
   size_t pos = 0;
@@ -97,59 +79,70 @@ std::vector<int> extract_keys_from_date(const std::string &date) {
   return year_month_day;
 }
 
+Date extract_date(
+  const std::string &d, size_t start, size_t end, const std::string &delim)
+{
+  size_t pos = 0;
+  std::string date_str, val_str;
+  std::vector<int> date_keys;
+  double date_value;
+
+  if (pos = d.find(delim, start), pos != std::string::npos && pos < end) {
+    val_str = std::string(d.begin() + pos + delim.length(), d.begin() + end);
+    date_value = atof(val_str.c_str());
+    if (is_float(val_str)) {
+      date_str = std::string(d.begin() + start, d.begin() + pos);
+      date_keys = extract_keys_from_date(date_str);
+      return Date(date_str, date_keys, date_value);
+    }
+  }
+
+  return Date();
+}
+
 template <typename Container>
-void add_date(Container &container, DateData &date_data) {
-  container.push_back(date_data);
+bool add_date(Container &container, Date &date) {
+  if (date.date_str.empty()) {
+    return false;
+  }
+
+  container.push_back(date);
+  return true;
 }
 
 template<typename TreeBranch, int MapDepth>
-void add_date(
-  TreeBranch &tree, DateData &date_data, const std::vector<int> &keys)
-{
+bool add_date(TreeBranch &tree, Date &date) {
   typedef typename TreeBranch::mapped_type MappedType;
   typedef typename TreeBranch::iterator BranchIt;
   
-  BranchIt it = tree.find(keys[MapDepth]);
+  BranchIt it = tree.find(date.date_keys[MapDepth]);
   if (it != tree.end()) {
-    add_date<MappedType, MapDepth + 1>(it->second, date_data, keys);
+    return add_date<MappedType, MapDepth + 1>(it->second, date);
   } else {
     std::pair<BranchIt, bool> ins_it =
-      tree.insert(std::make_pair(keys[MapDepth], MappedType()));
-    add_date<MappedType, MapDepth + 1>(ins_it.first->second, date_data, keys);
+      tree.insert(std::make_pair(date.date_keys[MapDepth], MappedType()));
+    return add_date<MappedType, MapDepth + 1>(ins_it.first->second, date);
   }
 }
 
 template <>
-void add_date<DayMap, 2>(
-  DayMap &day_map, DateData &date_data, const std::vector<int> &keys)
-{
-  DayMap::iterator it = day_map.find(keys[2]);
+bool add_date<DayMap, 2>(DayMap &day_map, Date &date) {
+  DayMap::iterator it = day_map.find(date.date_keys[2]);
   if (it == day_map.end()) {
-    day_map.insert(std::make_pair(keys[2], date_data));
+    day_map.insert(std::make_pair(date.date_keys[2], date));
+    return true;
   }
+
+  return false;
 }
 
 template <>
-void add_date<DateTree>(DateTree &tree, DateData &date_data) {
-  std::vector<int> tree_keys = extract_keys_from_date(date_data.first);
-  add_date<DateTree, 0>(tree, date_data, tree_keys);
-}
-
-template <typename TreeBranch, int MapDepth>
-void print_tree(const TreeBranch &tree) {
-  typedef typename TreeBranch::mapped_type MappedType;
-  typedef typename TreeBranch::const_iterator IT;
-
-  IT it = tree.begin();
-  while (it != tree.end()) {
-    print_tree<MappedType, MapDepth + 1>(it->second);
-    ++it;
+bool add_date<DateTree>(DateTree &tree, Date &date) {
+  if (date.date_str.empty() || !validate_date(date.date_str) || date.date_value < 0) {
+    return true;
   }
-}
 
-template <>
-void print_tree<DateData, 3>(const DateData &date_data) {
-  std::cout << date_data.first << " " << date_data.second << std::endl;
+  return add_date<DateTree, 0>(tree, date);
 }
 
 template<typename Container>
@@ -182,14 +175,13 @@ bool parse_file(
       newline_pos = data.size();
     }
 
-    DateData date = extract_date_data(data, pos, newline_pos, delim);
+    Date date = extract_date(data, pos, newline_pos, delim);
     pos = newline_pos + 1;
 
-    if (date.first.empty() || !validate_date(date.first) || date.second < 0) {
+    if (!add_date(container, date)) {
       std::cerr << "Error! Invalid date or value in file." << std::endl;
       return false;
     }
-    add_date(container, date);
   }
 
   return true;
@@ -203,7 +195,7 @@ int main(int ac, char **av) {
   }
 
   DateTree db_tree;
-  std::vector<DateData> input_vector;
+  std::vector<Date> input_vector;
 
   std::string input_file = load_file(std::string(av[1]));
   std::string db_file = load_file("data.csv");
@@ -214,7 +206,6 @@ int main(int ac, char **av) {
     std::cerr << "Error! One of the input files is not valid" << std::endl;
     return -1;
   }
-  print_tree<DateTree, 0>(db_tree);
   BitcoinExchange btc(db_tree, input_vector);
   btc.Exchange();
   return 0;

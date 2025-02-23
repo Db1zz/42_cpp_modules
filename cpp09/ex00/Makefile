@@ -1,6 +1,6 @@
 NAME = btc #kpop?????????????????
 COMPILER = c++ -std=c++98
-COMPILER_FLAGS = -Wall -Wextra #-Werror
+COMPILER_FLAGS = -Wall -Wextra -Werror
 
 SOURCES =	main.cpp	\
 			BitcoinExchange.cpp	\

@@ -15,13 +15,18 @@
 #include <vector>
 #include <exception>
 
-typedef struct DateData {
+struct Date {
   std::string date_str;
   std::vector<int> date_keys;
-  double value;
+  double date_value;
+
+  Date(const std::string &date_str,
+          const std::vector<int> &date_keys, double date_value)
+    : date_str(date_str), date_keys(date_keys), date_value(date_value) {};
+  Date() : date_str(""), date_keys(), date_value(0) {};
 };
 
-typedef std::map<int, DateData> DayMap;
+typedef std::map<int, Date> DayMap;
 
 template <typename MapKey, typename MapValue, int MapDepth>
 struct MapCreator {
@@ -33,19 +38,18 @@ struct MapCreator<MapKey, MapValue, 0> {
   typedef std::map<MapKey, MapValue> type;
 };
 
-typedef MapCreator<int, DateData, 2>::type DateTree;
+typedef MapCreator<int, Date, 2>::type DateTree;
 
 class BitcoinExchange {
   public:
-  BitcoinExchange(const DateTree &db_tree, const std::vector<DateData> &input);
+  BitcoinExchange(const DateTree &db_tree, const std::vector<Date> &input);
   ~BitcoinExchange();
 
   template <typename TreeBranch, int MapDepth>
-  double GetDateValue(TreeBranch &date_tree, const std::vector<int> &tree_keys);
+  Date GetDate(TreeBranch &date_tree, const std::vector<int> &date_keys);
 
   void Exchange();
 
-private:
   class NegativeNumberException : public std::exception {
   public:
     const char *what() const throw();
@@ -61,11 +65,15 @@ private:
       const char *what() const throw();
   };
 
-  void IsDateDataValidInput(const DateData &date);
+private:
+  bool AreKeysLessOrEqual(
+    const std::vector<int> date_keys1, const std::vector<int> &date_keys2);
+
+  void IsDateValidInput(const Date &date);
 
   const int input_max_val_;
   DateTree db_tree_;
-  std::vector<DateData> input_;
+  std::vector<Date> input_;
 };
 
 #endif  // BITCOIN_EXCHANGE_HPP
