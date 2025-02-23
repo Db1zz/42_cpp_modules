@@ -1,7 +1,7 @@
 #include "utils.hpp"
 #include <iostream>
-#include <ios> // std::noskipws
-#include <sstream> // std::istringstream
+#include <ios>
+#include <sstream>
 
 
 bool utils::isFloat(const std::string &str) {

@@ -119,9 +119,6 @@ Date BitcoinExchange::getDate(
   return getDate<MappedType, MapDepth + 1>(branch_it->second, date_keys);
 }
 
-/*
-  Base case for GetDate() template recursion lmao(IT'S SO CUTE, LUV IT)
-*/
 template <>
 Date BitcoinExchange::getDate<Date, 3>(
     Date &date, const std::vector<int> &date_keys)
@@ -262,7 +259,6 @@ bool BitcoinExchange::addDate(TreeBranch &tree, Date &date) {
   }
 }
 
-// Recursion basecase in case if DateTree was provided to the addDate
 template <>
 bool BitcoinExchange::addDate<DayMap, 2>(DayMap &day_map, Date &date) {
   DayMap::iterator it = day_map.find(date.date_keys[2]);
