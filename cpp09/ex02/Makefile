@@ -1,10 +1,9 @@
-NAME = btc #kpop?????????????????
+NAME = PmergeMe
 COMPILER = c++ -std=c++98
 COMPILER_FLAGS = -Wall -Wextra -Werror
 
 SOURCES =	main.cpp	\
-			BitcoinExchange.cpp	\
-			utils.cpp	\
+			PmergeMe.cpp	\
 
 OBJCECTS = $(SOURCES:.cpp=.o)
 
