@@ -3,14 +3,14 @@
 
 #include <iostream>
 
-template <typename T>
-void iter(const T *arr, int length, void(*func)(const T&)) {
-  if (arr == NULL || length == 0 || func == NULL) {
+template <typename T, typename F>
+void iter(T *arr, size_t size, F (*function)(T&)) {
+  if (arr == NULL || size == 0 || function == NULL) {
     return;
   }
 
-  for (int i = 0; i < length; i++) {
-    func(arr[i]);
+  for (size_t i = 0; i < size; ++i) {
+    function(arr[i]);
   }
 }
 

@@ -18,8 +18,19 @@ std::ostream &operator<<(std::ostream &o, const Cont &cl) {
   return o;
 }
 
+// class Container {
+// public:
+//   Container() {}
+//   std::string get() const { return "aboba"; }
+// };
+
+// std::ostream &operator<<(std::ostream &o, const Container &cl) {
+//   o << cl.get();
+//   return o;
+// }
+
 template<typename T>
-void print(const T &x) {
+void print(T &x) {
   std::cout << x << std::endl;
   return;
 }
@@ -28,7 +39,6 @@ int main() {
   int arr1[] = {0,1,2,3,4};
   Cont arr2[5];
 
-  iter(arr1, 5, print);
-  iter<int>(NULL, 0, NULL);
-  iter(arr2, 5, print);
+  iter(arr1, 5, print<int>);
+  iter(arr2, 5, print<Cont>);
 }
