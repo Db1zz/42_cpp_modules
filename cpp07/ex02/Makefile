@@ -1,6 +1,6 @@
 NAME = ex02
 COMPILER = c++ -std=c++98
-COMPILER_FLAGS = -Wall -Wextra -Werror -fsanitize=address
+COMPILER_FLAGS = -Wall -Wextra -Werror
 
 SOURCES =	main.cpp	\
 
