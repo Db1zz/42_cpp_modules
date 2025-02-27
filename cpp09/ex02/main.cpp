@@ -32,59 +32,72 @@ int jacobsthal_numbers(int n) {
 }
 
 /*
-  https://warwick.ac.uk/fac/sci/dcs/teaching/material-archive/cs341/fj.pdf
+  with each recursion level we have to multiple amount of pairs by 2,
+    and do it untill we gonna reach this statement: pairs_amount = size / pair_size == 0
+
+  pair_size = 2;
+  size == 10 / pair_size = 5; // 5 == amount of pairs
+  2,11 0,17 8,16 6,15 3,10
 */
-std::vector<int> merge_insertion_sort(const std::vector<int> &numbers)
-{
-  std::vector<int> sorted_vector;
-  std::vector<int> main;
+bool is_pair_greater(std::vector<int> &main, long p1_start, long p2_start, long pair_size) {
+  if (!(p1_start + pair_size - 1 < static_cast<long>(main.size()))
+    || !(p2_start + pair_size - 1 < static_cast<long>(main.size())))
+  {
+    return false;
+  }
+  return (main[p1_start + pair_size - 1] > main[p2_start + pair_size - 1]);
+}
 
 
+/*
+  11,2, 17,0, 16,8, 6,15, 10,3, 21,1, 18,9, 14,19, 12,5, 4,20, 13,7
+  -- --
+  
+
+  11,2, 17,0, 16,8, 6,15, 10,3, 21,1, 18,9, 14,19, 12,5, 4,20, 13,7
+  ----  ----
+
+  this function is the real banger >_<
+
+  References:
+    https://warwick.ac.uk/fac/sci/dcs/teaching/material-archive/cs341/fj.pdf
+    https://dev.to/emuminov/human-explanation-and-step-by-step-visualisation-of-the-ford-johnson-algorithm-5g91 
+*/
+void sort_pairs(std::vector<int> &main, const long pair_size) {
+  const long size = (long)main.size();
+
+  if (size / pair_size < 2) {
+    return;
+  }
+  for (long i = 0; i + pair_size < size; i += pair_size * 2) {
+    if (is_pair_greater(main, i, i + pair_size, pair_size)) {
+      std::swap_ranges(main.begin() + i, main.begin() + i + pair_size, main.begin() + i + pair_size);
+    }
+  }
+  sort_pairs(main, pair_size * 2);
   /*
-    Check if this one was sorted.w
+    Oke, Oke. Now we have to implement binary search thing with jacobsthal numbers.
+
+    I didn't understand the explanation from the Donald Knuth, so for this case I'm using this reference:
+    https://dev.to/emuminov/human-explanation-and-step-by-step-visualisation-of-the-ford-johnson-algorithm-5g91 
   */
-  sorted_vector = main;
-  return sorted_vector;
+  
 }
 
-bool is_greater(const std::vector<int> &a, const std::vector<int> &b) {
-  assert(a.size() == b.size() && "Size is not the same.");
-
-  return (a[a.size() - 1] > b[b.size() - 1]);
-}
-
-std::vector<int> *create_pairs(const std::vector<int> &main, size_t pair_size) {
-  if (main.size() <= 1) {
-    return NULL;
-  }
-
-  bool is_array_odd = main.size() % 2 == 0;
-  size_t size = main.size() - is_array_odd;
-  std::vector<std::vector<int>> a; // a is greater
-  std::vector<std::vector<int>> b; // b is less than a
-  std::vector<int> remainder; // odd pair
-  size_t i = 0;
-
-  // implement pair_size
-  while (i < size) {
-    a.push_back(std::vector<int>(main.begin() + i, main.begin() + i + pair_size));
-    b.push_back(std::vector<int>(main.begin() + i, main.begin() + i + pair_size));
-  }
-
-  if (!is_array_odd) {
-    remainder.push_back(std::vector<int>(main.begin() + i, main.begin() + main.size() - 1));
-  }
-
-
-}
-
-void sort_pairs(std::vector<int> &main, std::vector<int> a, std::vector<int> b) {
-
-  sort_pairs(main, a, b);
+void merge_insertion_sort(std::vector<int> &numbers)
+{
+  if (numbers.size() <= 1) {
+    return ;
+  } 
+  sort_pairs(numbers, 1);
+  display_array(numbers);
 }
 
 int main() {
-  std::vector<int> input;
-  merge_insertion_sort({11, 3, 65, 1, 2, 8, 10, 5, 4, 8});
-  std::cout << jacobsthal_numbers(2) << std::endl;
+  const long size = 22;
+  int numbers[] = {11,2, 17,0, 16,8, 6,15, 10,3, 21,1, 18,9, 14,19, 12,5, 20,4, 13,7};
+  std::vector<int> input(&numbers[0], &numbers[size]);
+  merge_insertion_sort(input);
+
+  // std::cout << jacobsthal_numbers(2) << std::endl;
 }
