@@ -76,12 +76,12 @@ void sort_pairs(std::vector<int> &main, const long pair_size) {
   }
   sort_pairs(main, pair_size * 2);
   /*
-    Oke, Oke. Now we have to implement binary search thing with jacobsthal numbers.
+    Oke, Oke. Now we have to implement binary search insertion with jacobsthal numbers.
 
     I didn't understand the explanation from the Donald Knuth, so for this case I'm using this reference:
     https://dev.to/emuminov/human-explanation-and-step-by-step-visualisation-of-the-ford-johnson-algorithm-5g91 
   */
-  
+
 }
 
 void merge_insertion_sort(std::vector<int> &numbers)
@@ -99,5 +99,5 @@ int main() {
   std::vector<int> input(&numbers[0], &numbers[size]);
   merge_insertion_sort(input);
 
-  // std::cout << jacobsthal_numbers(2) << std::endl;
+  return 0;
 }
