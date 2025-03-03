@@ -65,8 +65,9 @@ bool is_pair_greater(std::vector<int> &main, long p1_start, long p2_start, long 
 */
 void sort_pairs(std::vector<int> &main, const long pair_size) {
   const long size = (long)main.size();
+  const long pair_amount = size / pair_size;
 
-  if (size / pair_size < 2) {
+  if (pair_amount < 2) {
     return;
   }
   for (long i = 0; i + pair_size < size; i += pair_size * 2) {
@@ -86,12 +87,16 @@ void sort_pairs(std::vector<int> &main, const long pair_size) {
     pend is the rest of the B's
     main is the b1 and the rest of the A's
     step 3:
-      if there's not enougth elements for insertion in the orderd of Jacobsthal numbers go to the step 4:
+      if (go to the step 4 if there's not enough elements to perform the insertion in the Jacobsthal numbers orderd)
+        go to step 4
+      else
+        perform 
 
     step 4:
       green is the area of inserttion
       and red is the bound or the end of the search.
-      we need to current element with other elements in search area and insert
+
+      the current element needs to be with other elements in search area and insert
       it in the corresponding place. eg: elements b1 and a1 with 16, 17 and
       element that we want to insert is 19 so we need to insert it like this:
       16, 17, 19
@@ -101,6 +106,39 @@ void sort_pairs(std::vector<int> &main, const long pair_size) {
     we have to compare it with the whole array.
     using binary search we need to compare it and insert.
   */
+
+
+  /*
+    (b0, a0) (b1, a1) (b2, a3) (b4, a4) (b5, a5)
+
+    b0 is always smaller than a0, so we don't need to threat the pair as insertable or pending
+    pairs from b1....bn are insertable or pending
+
+    so the correct amount of pending can be calculated by: (pair_amount - 2) / 2
+  */
+  if (pair_amount > 2) {
+    int pending = (pair_amount - 2) / 2;
+    int perv = 1;
+    for (long i = 2; i < pair_amount; i++) {
+      int curr = jacobsthal_numbers(pending) - perv; // the number is the amount of pairs
+      pending -= curr;
+      perv = curr;
+      std::vector<int> p(main.begin() + i * pair_size, main.begin() + i * (pair_size * 2));
+      while (perv != curr) {
+        int curr_index = pair_size * 2 * i - 1;
+        if (curr_index >= main.size()) {
+          break;
+        }
+        std::binary_search(main.begin(), main.begin() + pair_size, p, std::greater);
+        --curr;
+      }
+    }
+  }
+  /*
+    curr - perv
+  */
+  // if (/* check if there's enough pairs to sort with Jacobsthal insertion*/)
+  // else /* perform stupid binarysearch insertion */
 }
 
 void merge_insertion_sort(std::vector<int> &numbers)
@@ -112,11 +150,11 @@ void merge_insertion_sort(std::vector<int> &numbers)
   display_array(numbers);
 }
 
-int main() {
-  const long size = 22;
-  int numbers[] = {11,2, 17,0, 16,8, 6,15, 10,3, 21,1, 18,9, 14,19, 12,5, 20,4, 13,7};
-  std::vector<int> input(&numbers[0], &numbers[size]);
-  merge_insertion_sort(input);
-
+int main(int ac, char **av) {
+  // const long size = 22;
+  // int numbers[] = {11,2, 17,0, 16,8, 6,15, 10,3, 21,1, 18,9, 14,19, 12,5, 20,4, 13,7};
+  // std::vector<int> input(&numbers[0], &numbers[size]);
+  // merge_insertion_sort(input);
+  // std::cout << jacobsthal_numbers(std::atoi(av[1])) << std::endl;
   return 0;
 }
