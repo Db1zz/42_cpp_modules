@@ -79,9 +79,28 @@ void sort_pairs(std::vector<int> &main, const long pair_size) {
     Oke, Oke. Now we have to implement binary search insertion with jacobsthal numbers.
 
     I didn't understand the explanation from the Donald Knuth, so for this case I'm using this reference:
-    https://dev.to/emuminov/human-explanation-and-step-by-step-visualisation-of-the-ford-johnson-algorithm-5g91 
+    https://dev.to/emuminov/human-explanation-and-step-by-step-visualisation-of-the-ford-johnson-algorithm-5g91
   */
+  /*
+    step 2:
+    pend is the rest of the B's
+    main is the b1 and the rest of the A's
+    step 3:
+      if there's not enougth elements for insertion in the orderd of Jacobsthal numbers go to the step 4:
 
+    step 4:
+      green is the area of inserttion
+      and red is the bound or the end of the search.
+      we need to current element with other elements in search area and insert
+      it in the corresponding place. eg: elements b1 and a1 with 16, 17 and
+      element that we want to insert is 19 so we need to insert it like this:
+      16, 17, 19
+
+    inserting odd element:
+    Since we don't have any guarantees that this odd element is sorted, 
+    we have to compare it with the whole array.
+    using binary search we need to compare it and insert.
+  */
 }
 
 void merge_insertion_sort(std::vector<int> &numbers)

@@ -1,5 +1,5 @@
 NAME = PmergeMe
-COMPILER = c++ -std=c++98 -g -fsanitize=address
+COMPILER = c++ -std=c++98
 COMPILER_FLAGS = -Wall -Wextra -Werror
 
 SOURCES =	main.cpp	\
