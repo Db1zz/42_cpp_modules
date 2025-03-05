@@ -31,14 +31,6 @@ int jacobsthal_numbers(int n) {
   return jacobsthal_numbers(n - 1) + 2 * jacobsthal_numbers(n - 2);
 }
 
-/*
-  with each recursion level we have to multiple amount of pairs by 2,
-    and do it untill we gonna reach this statement: pairs_amount = size / pair_size == 0
-
-  pair_size = 2;
-  size == 10 / pair_size = 5; // 5 == amount of pairs
-  2,11 0,17 8,16 6,15 3,10
-*/
 bool is_pair_greater(std::vector<int> &main, long p1_start, long p2_start, long pair_size) {
   if (!(p1_start + pair_size - 1 < static_cast<long>(main.size()))
     || !(p2_start + pair_size - 1 < static_cast<long>(main.size())))
@@ -48,20 +40,36 @@ bool is_pair_greater(std::vector<int> &main, long p1_start, long p2_start, long 
   return (main[p1_start + pair_size - 1] > main[p2_start + pair_size - 1]);
 }
 
-template <typename T>
+template <typename Numbers, typename Matrix>
 void copy_interval(
-  const T &src, T &dest, long interval_size, bool start_from_interval)
+  const Numbers &src, Matrix &dest, long interval_size, long start)
 {
   const long size = src.size();
-  long i = 0;
+  long i = start;
 
-  if (start_from_interval) {
-    i += interval_size;
-  }
   while (i + interval_size <= size) {
+    Numbers interval;
     std::cout << i << std::endl;
-    std::copy(src.begin() + i, src.begin() + i + interval_size, std::back_inserter(dest));
+    std::copy(src.begin() + i, src.begin() + i + interval_size, std::back_inserter(interval));
+    dest.push_back(interval);
     i += interval_size * 2;
+  }
+}
+
+// template <typename T>
+bool comp_upper(
+  const std::vector<int> &v1, const std::vector<int> &v2)
+{
+  return v1[v1.size() - 1] < v2[v2.size() - 1];
+}
+
+template <typename Cont, typename ContMatrix>
+void copy(const ContMatrix &src, Cont &dest) {
+  size_t dest_index = 0;
+
+  for (size_t i = 0; i < src.size(); ++i) {
+    std::copy(src[i].begin(), src[i].end(), dest.begin() + dest_index);
+    dest_index += src[i].size();
   }
 }
 
@@ -71,6 +79,8 @@ void copy_interval(
     https://dev.to/emuminov/human-explanation-and-step-by-step-visualisation-of-the-ford-johnson-algorithm-5g91 
 */
 void sort_pairs(std::vector<int> &main, const long pair_size) {
+  typedef std::vector<std::vector<int> >::iterator IT;
+
   const long size = (long)main.size();
   const long pair_amount = size / pair_size;
 
@@ -85,12 +95,32 @@ void sort_pairs(std::vector<int> &main, const long pair_size) {
   sort_pairs(main, pair_size * 2);
 
   int perv = 1;
-  std::vector<int> new_main; // b0 + a0...ax
-  std::vector<int> pend; // b1 + bx
+  int curr = jacobsthal_numbers(perv + 1);
+  std::vector<std::vector<int> > new_main; // b0 + a0...ax
+  std::vector<int> tmp;
+  std::vector<std::vector<int> > pend; // b1 + bx
 
-  while (true) {
+  std::copy(main.begin(), main.begin() + pair_size, std::back_inserter(tmp));
+  new_main.push_back(tmp);
+  copy_interval(main, new_main, pair_size, pair_size);
+  copy_interval(main, pend, pair_size, pair_size * 2);
 
+  /*
+    get jacobsthal number and check if there's enough elements in the pend
+    to perform advanced binary search insertion.
+
+    if no, perform default binary search insertion
+  */
+  // while (curr - perv < pend.size()) {
+  //   // perform advanced binary search insertion
+  // }
+  for (size_t i = 0; i < pend.size(); ++i) {
+    IT it = std::upper_bound(new_main.begin(), new_main.end(), pend[i], comp_upper);
+    new_main.insert(it, pend[i]);
   }
+
+  // copy everything from new_main to main
+  copy(new_main, main);
 }
 
 void merge_insertion_sort(std::vector<int> &numbers)
@@ -103,8 +133,8 @@ void merge_insertion_sort(std::vector<int> &numbers)
 }
 
 int main(int ac, char **av) {
-  const long size = 22;
-  int numbers[] = {11,2, 17,0, 16,8, 6,15, 10,3, 21,1, 18,9, 14,19, 12,5, 20,4, 13,7};
+  const long size = 8;
+  int numbers[] = {11,2, 17,0, 16,8, 6,15};
   std::vector<int> input(&numbers[0], &numbers[size]);
   merge_insertion_sort(input);
 
