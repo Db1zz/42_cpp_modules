@@ -56,9 +56,9 @@ void copy_interval(
   }
 }
 
-// template <typename T>
+template <typename T>
 bool comp_upper(
-  const std::vector<int> &v1, const std::vector<int> &v2)
+  const T &v1, const T &v2)
 {
   return v1[v1.size() - 1] < v2[v2.size() - 1];
 }
@@ -78,6 +78,7 @@ void copy(const ContMatrix &src, Cont &dest) {
     https://warwick.ac.uk/fac/sci/dcs/teaching/material-archive/cs341/fj.pdf
     https://dev.to/emuminov/human-explanation-and-step-by-step-visualisation-of-the-ford-johnson-algorithm-5g91 
 */
+template <typename Cont>
 void sort_pairs(std::vector<int> &main, const long pair_size) {
   typedef std::vector<std::vector<int> >::iterator IT;
 
@@ -105,17 +106,31 @@ void sort_pairs(std::vector<int> &main, const long pair_size) {
   copy_interval(main, new_main, pair_size, pair_size);
   copy_interval(main, pend, pair_size, pair_size * 2);
 
-  /*
-    get jacobsthal number and check if there's enough elements in the pend
-    to perform advanced binary search insertion.
+  while (curr - perv < pend.size()) {
+    perv = curr;
 
-    if no, perform default binary search insertion
-  */
-  // while (curr - perv < pend.size()) {
-  //   // perform advanced binary search insertion
-  // }
+    /*
+      i * pair_size - 1
+    */
+    /*
+      curr == 2
+      b1, b2, b3
+      0   1   2
+
+      b0, a0, a1, a2, a3
+      0   1   2   3   4
+    */
+    for (int index = curr; index != perv; --index) {
+      IT it = std::upper_bound(
+        new_main.begin(),
+        new_main.begin() + curr + 1,
+        pend[curr],
+        comp_upper<Cont>);
+    }
+    curr = jacobsthal_numbers(perv + 1);
+  }
   for (size_t i = 0; i < pend.size(); ++i) {
-    IT it = std::upper_bound(new_main.begin(), new_main.end(), pend[i], comp_upper);
+    IT it = std::upper_bound(new_main.begin(), new_main.end(), pend[i], comp_upper<Cont>);
     new_main.insert(it, pend[i]);
   }
 
@@ -128,7 +143,7 @@ void merge_insertion_sort(std::vector<int> &numbers)
   if (numbers.size() <= 1) {
     return ;
   } 
-  sort_pairs(numbers, 1);
+  sort_pairs<std::vector<int> >(numbers, 1);
   display_array(numbers);
 }
 
