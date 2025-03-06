@@ -10,6 +10,8 @@ public:
   ScavTrap(const ScavTrap &to_copy);
   ~ScavTrap();
   ScavTrap &operator=(const ScavTrap &to_copy);
+
+  void attack(const std::string& target);
   void guardGate();
 };
 

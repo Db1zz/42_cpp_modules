@@ -27,6 +27,20 @@ ScavTrap &ScavTrap::operator=(const ScavTrap &to_copy) {
   return *this;
 }
 
+void ScavTrap::attack(const std::string& target) {
+  if (_hit_points <= 0) {
+    std::cout << _name << " is dead and cannot take any actions\n";
+    return;
+  }
+  if (_energy_points - 1 < 0) {
+    std::cout << _name << " has not enough energy to attack!\n";
+    return;
+  }
+  std::cout << _name << " attacks " << target
+            << ", causing " << _attack_damage << " points of damage!\n";
+  --_energy_points;
+}
+
 void ScavTrap::guardGate() {
   if (_hit_points <= 0) {
     std::cout << _name << " is dead and cannot take any actions\n";

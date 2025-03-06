@@ -6,9 +6,9 @@ DiamondTrap::DiamondTrap(const std::string& name)
   : ClapTrap(name + "_clap_name"), _name(name)
 {
   std::cout << "DiamondTrap constructor called\n";
-  _hit_points = 100;
-  _energy_points = 50;
-  _attack_damage = 30;
+  _hit_points = FragTrap::_hit_points;
+  _energy_points = ScavTrap::_energy_points;
+  _attack_damage = FragTrap::_attack_damage;
 }
 
 DiamondTrap::DiamondTrap(const DiamondTrap &to_copy)
@@ -28,6 +28,10 @@ DiamondTrap &DiamondTrap::operator=(const DiamondTrap &to_copy) {
   ClapTrap::operator=(to_copy);
   _name = to_copy._name;
   return *this;
+}
+
+void DiamondTrap::attack(const std::string& target) {
+  this->ScavTrap::attack(target);
 }
 
 void DiamondTrap::whoAmI() {

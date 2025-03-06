@@ -12,6 +12,7 @@ public:
   ~DiamondTrap();
   DiamondTrap &operator=(const DiamondTrap &to_copy);
 
+  void attack(const std::string& target);
   void whoAmI();
 private:
   std::string _name;
