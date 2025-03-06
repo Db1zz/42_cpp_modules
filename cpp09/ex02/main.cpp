@@ -56,9 +56,9 @@ void copy_interval(
   }
 }
 
-template <typename T>
 bool comp_upper(
-  const T &v1, const T &v2)
+  const std::vector<int> &v1,
+  const std::vector<int> &v2)
 {
   return v1[v1.size() - 1] < v2[v2.size() - 1];
 }
@@ -78,7 +78,7 @@ void copy(const ContMatrix &src, Cont &dest) {
     https://warwick.ac.uk/fac/sci/dcs/teaching/material-archive/cs341/fj.pdf
     https://dev.to/emuminov/human-explanation-and-step-by-step-visualisation-of-the-ford-johnson-algorithm-5g91 
 */
-template <typename Cont>
+
 void sort_pairs(std::vector<int> &main, const long pair_size) {
   typedef std::vector<std::vector<int> >::iterator IT;
 
@@ -95,8 +95,6 @@ void sort_pairs(std::vector<int> &main, const long pair_size) {
   }
   sort_pairs(main, pair_size * 2);
 
-  int perv = 1;
-  int curr = jacobsthal_numbers(perv + 1);
   std::vector<std::vector<int> > new_main; // b0 + a0...ax
   std::vector<int> tmp;
   std::vector<std::vector<int> > pend; // b1 + bx
@@ -106,32 +104,42 @@ void sort_pairs(std::vector<int> &main, const long pair_size) {
   copy_interval(main, new_main, pair_size, pair_size);
   copy_interval(main, pend, pair_size, pair_size * 2);
 
-  while (curr - perv < pend.size()) {
-    perv = curr;
-
-    /*
-      i * pair_size - 1
-    */
-    /*
-      curr == 2
-      b1, b2, b3
-      0   1   2
-
-      b0, a0, a1, a2, a3
-      0   1   2   3   4
-    */
-    for (int index = curr; index != perv; --index) {
+  /*
+        perv == 1
+        curr == 3
+        curr - perv == 2
+        interval_index == 0 - 1
+        perv == 3
+        curr == 5
+        interval_index = 2 - 5(curr - perv)
+       b2 b3 b4
+        0  1  2
+    b1 a1 a2 a3 a4
+     0  1  2  3  4
+  */
+  long perv = 1;
+  long curr = 3;
+  long index = 0;
+  while (curr - perv + perv - 2 < pend.size()) {
+    for (long i = curr - perv + perv - 2; i >= perv - 1; --i) {
+      // std::cout << "i: " << i << std::endl;
+      // std::cout << "perv - 1: " << perv - 1 << std::endl;
       IT it = std::upper_bound(
         new_main.begin(),
-        new_main.begin() + curr + 1,
-        pend[curr],
-        comp_upper<Cont>);
+        new_main.begin() + curr - perv + perv - 2,
+        pend[i],
+        comp_upper);
+      new_main.insert(it, pend[i]);
     }
-    curr = jacobsthal_numbers(perv + 1);
+    perv = curr;
+    index = perv - 1;
+    curr = jacobsthal_numbers(curr + 1);
   }
-  for (size_t i = 0; i < pend.size(); ++i) {
-    IT it = std::upper_bound(new_main.begin(), new_main.end(), pend[i], comp_upper<Cont>);
-    new_main.insert(it, pend[i]);
+  while (index < pend.size()) {
+    std::cout << "2\n";
+    IT it = std::upper_bound(new_main.begin(), new_main.end(), pend[index], comp_upper);
+    new_main.insert(it, pend[index]);
+    ++index;
   }
 
   // copy everything from new_main to main
@@ -143,7 +151,7 @@ void merge_insertion_sort(std::vector<int> &numbers)
   if (numbers.size() <= 1) {
     return ;
   } 
-  sort_pairs<std::vector<int> >(numbers, 1);
+  sort_pairs(numbers, 1);
   display_array(numbers);
 }
 
