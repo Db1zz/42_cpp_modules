@@ -1,4 +1,4 @@
-NAME = diamond_trap
+NAME = ex03
 COMPILER = c++ -std=c++98
 COMPILER_FLAGS = -Wall -Wextra -Werror
 

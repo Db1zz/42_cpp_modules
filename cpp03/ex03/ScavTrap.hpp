@@ -6,9 +6,10 @@
 
 class ScavTrap : virtual public ClapTrap {
 public:
-  ScavTrap();
-  ScavTrap(const std::string& _name);
+  ScavTrap(const std::string& name = "DefaultName");
+  ScavTrap(const ScavTrap &to_copy);
   ~ScavTrap();
+  ScavTrap &operator=(const ScavTrap &to_copy);
   void guardGate();
 };
 

@@ -1,9 +1,10 @@
-NAME = scav_trap
+NAME = ex01
 COMPILER = c++ -std=c++98
 COMPILER_FLAGS = -Wall -Wextra -Werror
 
 SOURCES =	main.cpp \
-			ClapTrap.cpp
+			ClapTrap.cpp	\
+			ScavTrap.cpp	\
 
 OBJCECTS = $(SOURCES:.cpp=.o)
 
