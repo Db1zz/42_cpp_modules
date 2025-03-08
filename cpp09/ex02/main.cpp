@@ -2,6 +2,8 @@
 #include <vector>
 #include <algorithm>
 #include <cassert>
+#include "Error.hpp"
+#include "parser.hpp"
 
 void display_array(const std::vector<int> &array) {
   std::cout << "[";
@@ -59,7 +61,6 @@ void copy_interval(
 
   while (i + interval_size <= size) {
     Numbers interval;
-    std::cout << i << std::endl;
     std::copy(src.begin() + i, src.begin() + i + interval_size, std::back_inserter(interval));
     dest.push_back(interval);
     i += interval_size * 2;
@@ -88,7 +89,6 @@ void copy(const ContMatrix &src, Cont &dest) {
     https://warwick.ac.uk/fac/sci/dcs/teaching/material-archive/cs341/fj.pdf
     https://dev.to/emuminov/human-explanation-and-step-by-step-visualisation-of-the-ford-johnson-algorithm-5g91 
 */
-
 void sort_pairs(std::vector<int> &main, const long pair_size) {
   typedef std::vector<std::vector<int> >::iterator IT;
 
@@ -99,44 +99,28 @@ void sort_pairs(std::vector<int> &main, const long pair_size) {
     return;
   }
   for (long i = 0; i + pair_size < size; i += pair_size * 2) {
-    display_array(main);
     if (is_pair_greater(main, i, i + pair_size, pair_size)) {
       std::swap_ranges(main.begin() + i, main.begin() + i + pair_size, main.begin() + i + pair_size);
     }
   }
   sort_pairs(main, pair_size * 2);
-  display_array(main);
-  std::vector<std::vector<int> > new_main; // b0 + a0...ax
+
+  // b0 + (a0...ax)
+  std::vector<std::vector<int> > new_main;
   std::vector<int> tmp;
-  std::vector<std::vector<int> > pend; // b1 + bx
+  
+  // (b0...bx] b0 is excluded e.g: (b1...bx)
+  std::vector<std::vector<int> > pend;
 
   std::copy(main.begin(), main.begin() + pair_size, std::back_inserter(tmp));
   new_main.push_back(tmp);
   copy_interval(main, new_main, pair_size, pair_size);
   copy_interval(main, pend, pair_size, pair_size * 2);
-  std::cout << "Pend: "; display_matrix(pend);
-  std::cout << "NewMain: "; display_matrix(new_main);
-  /*
-    perv == 1
-    curr == 3
-    curr - perv == 2
-    interval_index == 0 - 1
-    perv == 3
-    curr == 5
-    interval_index = 2 - 5(curr - perv)
-       b2 b3 b4
-        0  1  2
-    b1 a1 a2 a3 a4
-     0  1  2  3  4
-  */
-  /*
-    (b1 a1) (b2 a2) (b3 a3) (b4 a4) (b5 a5)
-  */
 
   long perv = 1;
   long curr = 3;
   long index = 0;
-  while (curr - perv + perv - 2 < pend.size()) {
+  while (curr - perv + perv - 2 < static_cast<long>(pend.size())) {
     for (long i = curr - perv + perv - 2; i >= perv - 1; --i) {
       IT it = std::upper_bound(
         new_main.begin(),
@@ -149,19 +133,16 @@ void sort_pairs(std::vector<int> &main, const long pair_size) {
     index = perv - 1;
     curr = jacobsthal_numbers(curr + 1);
   }
-  while (index < pend.size()) {
+  while (index < static_cast<long>(pend.size())) {
     IT it = std::upper_bound(new_main.begin(), new_main.end(), pend[index], comp_upper);
     new_main.insert(it, pend[index]);
     ++index;
   }
 
-  // copy everything from new_main to main
-  display_matrix(new_main);
   copy(new_main, main);
 }
 
-void merge_insertion_sort(std::vector<int> &numbers)
-{
+void merge_insertion_sort(std::vector<int> &numbers) {
   if (numbers.size() <= 1) {
     return ;
   } 
@@ -169,14 +150,21 @@ void merge_insertion_sort(std::vector<int> &numbers)
   display_array(numbers);
 }
 
-int main(int ac, char **av) {
-  const long size = 5;
-  int numbers[] = {11, 2, 6, 7, 8};
-  std::vector<int> input(&numbers[0], &numbers[size]);
-  merge_insertion_sort(input);
+int main(int ac, const char **av) {
+  std::vector<int> input_numbers;
 
-  // std::vector<int> dest;
-  // copy_interval(input, dest, 4, true);
-  // display_array(dest);
+  try {
+    parse_input(av + 1, ac - 1, input_numbers);
+  } catch (const Error &e) {
+    std::cerr << "Error: " << std::endl;
+    display_error(e);
+    return EXIT_FAILURE;
+  } catch (const std::runtime_error &e) {
+    std::cerr << "Error: " << e.what() << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  display_array(input_numbers);
+  merge_insertion_sort(input_numbers);
   return 0;
-}
+} 
