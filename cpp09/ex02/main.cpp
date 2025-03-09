@@ -1,9 +1,10 @@
+#include "ParserError.hpp"
+#include "parser.hpp"
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
 #include <cassert>
-#include "Error.hpp"
-#include "parser.hpp"
 
 void display_array(const std::vector<int> &array) {
   std::cout << "[";
@@ -31,18 +32,18 @@ void display_matrix(const std::vector<std::vector<int> > &array) {
   std::cout << "]" << std::endl;
 }
 
-/*
-  https://en.wikipedia.org/wiki/Jacobsthal_number
-*/
 int jacobsthal_numbers(int n) {
-  if (n == 1) {
-    return 1;
-  } else if (n == 0) {
-    return 0;
-  }
-  return jacobsthal_numbers(n - 1) + 2 * jacobsthal_numbers(n - 2);
-}
+    if (n == 0) return 0;
+    if (n == 1) return 1;
 
+    int a = 0, b = 1, c;
+    for (int i = 2; i <= n; i++) {
+        c = b + 2 * a;
+        a = b;
+        b = c;
+    }
+    return b;
+}
 bool is_pair_greater(std::vector<int> &main, long p1_start, long p2_start, long pair_size) {
   if (!(p1_start + pair_size - 1 < static_cast<long>(main.size()))
     || !(p2_start + pair_size - 1 < static_cast<long>(main.size())))
@@ -84,11 +85,6 @@ void copy(const ContMatrix &src, Cont &dest) {
   }
 }
 
-/*
-  References:
-    https://warwick.ac.uk/fac/sci/dcs/teaching/material-archive/cs341/fj.pdf
-    https://dev.to/emuminov/human-explanation-and-step-by-step-visualisation-of-the-ford-johnson-algorithm-5g91 
-*/
 void sort_pairs(std::vector<int> &main, const long pair_size) {
   typedef std::vector<std::vector<int> >::iterator IT;
 
@@ -105,11 +101,8 @@ void sort_pairs(std::vector<int> &main, const long pair_size) {
   }
   sort_pairs(main, pair_size * 2);
 
-  // b0 + (a0...ax)
   std::vector<std::vector<int> > new_main;
   std::vector<int> tmp;
-  
-  // (b0...bx] b0 is excluded e.g: (b1...bx)
   std::vector<std::vector<int> > pend;
 
   std::copy(main.begin(), main.begin() + pair_size, std::back_inserter(tmp));
@@ -117,22 +110,37 @@ void sort_pairs(std::vector<int> &main, const long pair_size) {
   copy_interval(main, new_main, pair_size, pair_size);
   copy_interval(main, pend, pair_size, pair_size * 2);
 
-  long perv = 1;
-  long curr = 3;
-  long index = 0;
-  while (curr - perv + perv - 2 < static_cast<long>(pend.size())) {
-    for (long i = curr - perv + perv - 2; i >= perv - 1; --i) {
+  int j = 1;
+
+  int start = jacobsthal_numbers(j - 1);
+  int end = jacobsthal_numbers(j);
+
+  int dif = end - start;
+
+  int pend_index = 0;
+  int index = 0;
+  int inserted = 0;
+
+  while (end + dif < static_cast<int>(new_main.size())) {
+    for (int i = pend_index; i < pend_index + dif && i < pend.size(); ++i) {
+      int bound = end + dif + inserted;
       IT it = std::upper_bound(
         new_main.begin(),
-        new_main.begin() + curr - perv + perv - 1,
+        new_main.end(),
         pend[i],
-        comp_upper);
+        comp_upper
+      );
       new_main.insert(it, pend[i]);
     }
-    perv = curr;
-    index = perv - 1;
-    curr = jacobsthal_numbers(curr + 1);
+    ++inserted;
+    pend_index += dif;
+    index = end;
+    start = end;
+    end = jacobsthal_numbers(++j);
+    dif = end - start;
+    display_matrix(new_main);
   }
+
   while (index < static_cast<long>(pend.size())) {
     IT it = std::upper_bound(new_main.begin(), new_main.end(), pend[index], comp_upper);
     new_main.insert(it, pend[index]);
@@ -147,7 +155,20 @@ void merge_insertion_sort(std::vector<int> &numbers) {
     return ;
   } 
   sort_pairs(numbers, 1);
-  display_array(numbers);
+}
+
+bool greater(std::vector<int>::iterator a, std::vector<int>::iterator b) {
+  return *a >= *b;
+}
+
+bool is_sorted(std::vector<int>::iterator start, std::vector<int>::iterator end) {
+  while (start + 1 < end && greater(start + 1, start)) {
+    ++start;
+  }
+  if (start + 1 != end) {
+    std::cout << "Error: " << *start << std::endl;
+  }
+  return start + 1 == end;
 }
 
 int main(int ac, const char **av) {
@@ -155,16 +176,21 @@ int main(int ac, const char **av) {
 
   try {
     parse_input(av + 1, ac - 1, input_numbers);
-  } catch (const Error &e) {
+  } catch (const ParserError &e) {
     std::cerr << "Error: " << std::endl;
-    display_error(e);
+    e.displayError();
     return EXIT_FAILURE;
   } catch (const std::runtime_error &e) {
     std::cerr << "Error: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }
 
-  display_array(input_numbers);
+  std::cout << "Before: "; display_array(input_numbers);
+
   merge_insertion_sort(input_numbers);
-  return 0;
-} 
+  std::cout << "After: "; display_array(input_numbers);
+  if (is_sorted(input_numbers.begin(), input_numbers.end())) {
+    std::cout << "DA\n";
+  }
+  return EXIT_SUCCESS;
+}

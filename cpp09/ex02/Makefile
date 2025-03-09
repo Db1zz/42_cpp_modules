@@ -1,10 +1,10 @@
 NAME = PmergeMe
-COMPILER = c++ -std=c++98
-COMPILER_FLAGS = -Wall -Wextra #-Werror
+COMPILER = c++ -std=c++11
+COMPILER_FLAGS = -Wall -Wextra -Werror
 
 SOURCES =	main.cpp	\
 			PmergeMe.cpp	\
-			Error.cpp	\
+			ParserError.cpp	\
 			parser.cpp	\
 
 OBJCECTS = $(SOURCES:.cpp=.o)

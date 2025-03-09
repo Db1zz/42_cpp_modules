@@ -4,13 +4,14 @@
 #include <stdexcept>
 #include <string>
 
-class Error : public std::runtime_error {
+class ParserError : public std::runtime_error {
 public:
-  Error(const std::string &message, const char **input, int input_size, int position);
+  ParserError(const std::string &message, const char **input, int input_size, int position);
 
   const char **getInput() const;
   int getInputSize() const;
   int getPosition() const;
+  void displayError() const;
 
 private:
   const char **input_;
