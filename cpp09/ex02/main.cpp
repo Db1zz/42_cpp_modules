@@ -85,6 +85,47 @@ void copy(const ContMatrix &src, Cont &dest) {
   }
 }
 
+void insert_pending(
+  std::vector<std::vector<int> > &new_main,
+  const std::vector<std::vector<int> > &pend)
+{
+  typedef std::vector<std::vector<int> >::iterator IT;
+
+  int j = 1;
+
+  int start = jacobsthal_numbers(j - 1);
+  int end = jacobsthal_numbers(j);
+
+  int dif = end - start;
+
+  int pend_index = 0;
+  int index = 0;
+
+  while (end + dif < static_cast<int>(new_main.size())) {
+    for (int i = pend_index; i < pend_index + dif && i < pend.size(); ++i) {
+      IT it = std::upper_bound(
+        new_main.begin(),
+        new_main.end(),
+        pend[i],
+        comp_upper
+      );
+      new_main.insert(it, pend[i]);
+    }
+    pend_index += dif;
+    index = end;
+    start = end;
+    end = jacobsthal_numbers(++j);
+    dif = end - start;
+    display_matrix(new_main);
+  }
+
+  while (index < static_cast<long>(pend.size())) {
+    IT it = std::upper_bound(new_main.begin(), new_main.end(), pend[index], comp_upper);
+    new_main.insert(it, pend[index]);
+    ++index;
+  }
+}
+
 void sort_pairs(std::vector<int> &main, const long pair_size) {
   typedef std::vector<std::vector<int> >::iterator IT;
 
@@ -102,50 +143,16 @@ void sort_pairs(std::vector<int> &main, const long pair_size) {
   sort_pairs(main, pair_size * 2);
 
   std::vector<std::vector<int> > new_main;
-  std::vector<int> tmp;
   std::vector<std::vector<int> > pend;
+  std::vector<int> odd_pair;
+  
+  std::copy(main.begin(), main.begin() + pair_size, std::back_inserter(odd_pair));
 
-  std::copy(main.begin(), main.begin() + pair_size, std::back_inserter(tmp));
-  new_main.push_back(tmp);
+  new_main.push_back(odd_pair);
   copy_interval(main, new_main, pair_size, pair_size);
   copy_interval(main, pend, pair_size, pair_size * 2);
 
-  int j = 1;
-
-  int start = jacobsthal_numbers(j - 1);
-  int end = jacobsthal_numbers(j);
-
-  int dif = end - start;
-
-  int pend_index = 0;
-  int index = 0;
-  int inserted = 0;
-
-  while (end + dif < static_cast<int>(new_main.size())) {
-    for (int i = pend_index; i < pend_index + dif && i < pend.size(); ++i) {
-      int bound = end + dif + inserted;
-      IT it = std::upper_bound(
-        new_main.begin(),
-        new_main.end(),
-        pend[i],
-        comp_upper
-      );
-      new_main.insert(it, pend[i]);
-    }
-    ++inserted;
-    pend_index += dif;
-    index = end;
-    start = end;
-    end = jacobsthal_numbers(++j);
-    dif = end - start;
-    display_matrix(new_main);
-  }
-
-  while (index < static_cast<long>(pend.size())) {
-    IT it = std::upper_bound(new_main.begin(), new_main.end(), pend[index], comp_upper);
-    new_main.insert(it, pend[index]);
-    ++index;
-  }
+  insert_pending(new_main, pend);
 
   copy(new_main, main);
 }
