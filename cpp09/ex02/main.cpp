@@ -85,6 +85,23 @@ void copy(const ContMatrix &src, Cont &dest) {
   }
 }
 
+// This function assume that Container hasn't odd elements
+template <typename Container>
+typename Container::iterator binary_search(
+  typename Container::iterator search_start,
+  typename Container::iterator search_end,
+  int pair_size,
+  int pair_value)
+{
+  for (int i = pair_size; search_start + i < search_end; i += pair_size) {
+    
+    if (*search_start > pair_value) {
+      return search_start + i;
+    }
+  }
+  return search_end;
+}
+
 void insert_pending(
   std::vector<std::vector<int> > &new_main,
   const std::vector<std::vector<int> > &pend)
@@ -127,8 +144,6 @@ void insert_pending(
 }
 
 void sort_pairs(std::vector<int> &main, const long pair_size) {
-  typedef std::vector<std::vector<int> >::iterator IT;
-
   const long size = (long)main.size();
   const long pair_amount = size / pair_size;
 
@@ -142,10 +157,10 @@ void sort_pairs(std::vector<int> &main, const long pair_size) {
   }
   sort_pairs(main, pair_size * 2);
 
-  std::vector<std::vector<int> > new_main;
-  std::vector<std::vector<int> > pend;
+  std::vector<int> new_main;
+  std::vector<int> pend;
   std::vector<int> odd_pair;
-  
+
   std::copy(main.begin(), main.begin() + pair_size, std::back_inserter(odd_pair));
 
   new_main.push_back(odd_pair);
