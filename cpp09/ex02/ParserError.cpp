@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <string>
 #include <iostream>
+#include <cstring>
 
 ParserError::ParserError(const std::string &message, const char **input, int input_size, int position)
   : std::runtime_error(message), input_(input), input_size_(input_size), position_(position) {}
