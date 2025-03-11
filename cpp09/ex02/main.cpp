@@ -40,7 +40,6 @@
 */
 
 /*
-  
   [0, 1, 2, 3, 4, 5, 6, 7]
   ^            ^        ^
   s            m        e
@@ -53,24 +52,26 @@ typename Container::iterator binary_search(
   int pair_size,
   int pair_value)
 {
-  typename Container::iterator it;
-  typename Container::iterator start = first;
-  typename std::iterator_traits<typename Container::iterator>::difference_type count, step;
-  count = std::distance(start, last) / pair_size;
+  int result_index = 0;
 
-  while (count > 0) {
-    it = start;
-    step = count / 2;
-    std::advance(it, step);
+  int high_pair = (last - first) / pair_size - 1;
+  int low = 0;
+  int mittel;
 
-    if (!std::less<int>()(pair_value, *it)) {
-      start = ++it;
-      count -= step + 1;
+  while (low < high_pair) {
+    mittel = low + (high_pair - low) / 2;
+    int value = *(first + pair_size + (mittel * pair_size));
+
+    if (pair_value >= value) {
+      result_index = mittel * pair_size;
+      low = mittel + 1;
+    } else if (pair_value < value) {
+      high_pair = mittel;
     } else {
-      count = step;
+      return first + result_index;
     }
   }
-  return (start + (pair_size - ((last - start) % pair_size)));
+  return first + result_index;
 }
 
 void display_array(const std::vector<int> &array) {
@@ -265,10 +266,10 @@ int main(int ac, const char **av) {
   std::vector<int> vec(&temp[0], &temp[size]);
   display_array(vec);
 
-  std::vector<int>::iterator it = binary_search<std::vector<int> >(vec.begin(), vec.end(), 2, 4);
+  std::vector<int>::iterator it = binary_search<std::vector<int> >(vec.begin(), vec.end(), 2, 7);
 
   if (it < vec.end()) {
-    std::cout << "Result: " << *it << std::endl;
+      std::cout << "Result: " << *it << std::endl;
   }
 
   return 0;
