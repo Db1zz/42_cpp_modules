@@ -5,6 +5,7 @@
 #include <vector>
 #include <algorithm>
 #include <cassert>
+#include <functional>
 
 /*
   search = 5
@@ -37,31 +38,39 @@
   end = 5
   mittel = start + (end - start / 2) == 5
 */
+
+/*
+  
+  [0, 1, 2, 3, 4, 5, 6, 7]
+  ^            ^        ^
+  s            m        e
+*/
+
 template <typename Container>
 typename Container::iterator binary_search(
-  typename Container::iterator start,
-  typename Container::iterator end,
+  typename Container::iterator first,
+  typename Container::iterator last,
   int pair_size,
   int pair_value)
 {
-  typename Container::iterator not_found = end;
-  typename Container::iterator mittel;
+  typename Container::iterator it;
+  typename Container::iterator start = first;
+  typename std::iterator_traits<typename Container::iterator>::difference_type count, step;
+  count = std::distance(start, last) / pair_size;
 
-  while (start < end) {
-    mittel = start + ((end - start) / 2) - 1;
-    std::cout << "Mittel: " << *mittel << std::endl;
-    std::cout << "Start: " << *start << std::endl;
-    std::cout << "End: " << *(end - 1) << std::endl;
-    if (*mittel > pair_value) {
-      end = mittel - pair_size;
-    } else if (*mittel < pair_value) {
-      start = mittel + pair_size;
+  while (count > 0) {
+    it = start;
+    step = count / 2;
+    std::advance(it, step);
+
+    if (!std::less<int>()(pair_value, *it)) {
+      start = ++it;
+      count -= step + 1;
     } else {
-      return mittel;
+      count = step;
     }
   }
-  std::cout << "not found\n";
-  return not_found;
+  return (start + (pair_size - ((last - start) % pair_size)));
 }
 
 void display_array(const std::vector<int> &array) {
@@ -152,12 +161,13 @@ void insert_pending(std::vector<int> &new_main, const std::vector<int> &pend, in
 
   while ((end + dif) * pair_size < static_cast<int>(new_main.size())) {
     for (int i = pend_index; i < pend_index + dif * pair_size && i < pend.size(); i += pair_size) {
-      IT it = std::upper_bound(
+      IT it = binary_search<std::vector<int> >(
         new_main.begin(),
         new_main.end(),
+        pair_size,
         pend[i]
       );
-      new_main.insert(it, pend[i]);
+      new_main.insert(it, pend.begin() + i, pend.begin() + i + pair_size);
     }
     pend_index += dif * pair_size;
     index = end * pair_size;
@@ -168,8 +178,8 @@ void insert_pending(std::vector<int> &new_main, const std::vector<int> &pend, in
   }
 
   while (index < static_cast<long>(pend.size())) {
-    IT it = std::upper_bound(new_main.begin(), new_main.end(), pend[index * pair_size]);
-    new_main.insert(it, pend[index]);
+    IT it = binary_search<std::vector<int > >(new_main.begin(), new_main.end(), pair_size, pend[index]);
+    new_main.insert(it, pend.begin() + index, pend.begin() + index + pair_size);
     index += pair_size;
   }
 }
@@ -250,12 +260,12 @@ int main(int ac, const char **av) {
   // return EXIT_SUCCESS;
 
   int size = 8;
-  int temp[size] = {0, 1, 2, 3, 4, 5, 6, 7};
+  int temp[8] = {0, 1, 2, 3, 4, 5, 6, 7};
 
   std::vector<int> vec(&temp[0], &temp[size]);
   display_array(vec);
 
-  std::vector<int>::iterator it = binary_search<std::vector<int> >(vec.begin(), vec.end(), 1, 4);
+  std::vector<int>::iterator it = binary_search<std::vector<int> >(vec.begin(), vec.end(), 2, 4);
 
   if (it < vec.end()) {
     std::cout << "Result: " << *it << std::endl;
