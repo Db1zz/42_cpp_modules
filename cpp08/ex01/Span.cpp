@@ -72,21 +72,14 @@ int Span::ShortestSpan() {
   }
 
   std::sort(numbers_.begin(), numbers_.end());
-
   int shortest = INT_MAX;
-  int l1;
-  int l2;
 
   for (size_t i = 0; i + 1 < numbers_.size(); ++i) {
     int span = numbers_[i + 1] - numbers_[i];
     if (span < shortest) {
-      l1 = numbers_[i];
-      l2 = numbers_[i + 1];
       shortest = span; 
     }
   }
-
-  std::cout << l2 << " " << l1 << std::endl;
   return shortest;
 }
 
