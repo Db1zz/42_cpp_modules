@@ -2,6 +2,7 @@
 #include <iostream>
 #include <algorithm>
 #include <functional>
+#include <limits.h>
 
 Span::Span(uint32_t capacity)
 {
@@ -33,14 +34,6 @@ void Span::AddNumber(int number) {
     throw NotEnoughSpace();
   }
   numbers_.push_back(number);
-}
-
-void Span::Insert(VecIntIt insert_it, VecIntIt range_begin, VecIntIt range_end) {
-  if (range_end - range_begin + numbers_.size() > numbers_.capacity()) {
-    throw NotEnoughSpace();
-  }
-  // TODO: Make it work on linux.
-  numbers_.insert(insert_it, range_begin, range_end);
 }
 
 void Span::PushBack(const std::vector<int> &numbers) {
@@ -79,8 +72,22 @@ int Span::ShortestSpan() {
   }
 
   std::sort(numbers_.begin(), numbers_.end());
-  std::cout << numbers_[0] << " " << numbers_[1] << std::endl;
-  return numbers_[1] - numbers_[0];
+
+  int shortest = INT_MAX;
+  int l1;
+  int l2;
+
+  for (size_t i = 0; i + 1 < numbers_.size(); ++i) {
+    int span = numbers_[i + 1] - numbers_[i];
+    if (span < shortest) {
+      l1 = numbers_[i];
+      l2 = numbers_[i + 1];
+      shortest = span; 
+    }
+  }
+
+  std::cout << l2 << " " << l1 << std::endl;
+  return shortest;
 }
 
 int Span::LongestSpan() const {

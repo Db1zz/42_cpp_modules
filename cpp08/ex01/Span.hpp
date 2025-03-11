@@ -17,7 +17,6 @@ public:
   typedef std::vector<int>::const_iterator VecIntIt;
 
   void AddNumber(int number);
-  void Insert(VecIntIt insert_it, VecIntIt range_begin, VecIntIt range_end);
   void PushBack(const std::vector<int> &numbers);
 
   VecIntIt Begin() const;
