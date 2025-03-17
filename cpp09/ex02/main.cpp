@@ -52,26 +52,34 @@ typename Container::iterator binary_search(
   int pair_size,
   int pair_value)
 {
+  if (pair_value > *(last - 1)) {
+    return last;
+  } else if (*(first + pair_size - 1) > pair_value) {
+    return first;
+  }
+
   int result_index = 0;
 
   int high_pair = (last - first) / pair_size - 1;
   int low = 0;
   int mittel;
 
-  while (low < high_pair) {
+  while (low <= high_pair) {
     mittel = low + (high_pair - low) / 2;
-    int value = *(first + pair_size + (mittel * pair_size));
+    int value = *(first + pair_size - 1 + (mittel * pair_size));
 
-    if (pair_value >= value) {
-      result_index = mittel * pair_size;
+    if (pair_value > value) {
+      result_index = mittel + 1;
       low = mittel + 1;
     } else if (pair_value < value) {
-      high_pair = mittel;
+      high_pair = mittel - 1;
     } else {
-      return first + result_index;
+      break;
     }
   }
-  return first + result_index;
+  if (result_index == 0)
+  ++result_index;
+  return first + (result_index * pair_size);
 }
 
 void display_array(const std::vector<int> &array) {
@@ -130,6 +138,8 @@ void insert_interval(
   typename Numbers::iterator insert_pos,
   int interval_size)
 {
+  assert(source_end >= source_start);
+  assert(dest.end() >= insert_pos);
   int i = dest.end() - insert_pos;
 
   while (source_start + interval_size <= source_end) {
@@ -150,31 +160,45 @@ void insert_pending(std::vector<int> &new_main, const std::vector<int> &pend, in
 {
   typedef std::vector<int>::iterator IT;
 
-  int j = 1;
+  int j = 3;
 
-  int start = jacobsthal_numbers(j - 1);
-  int end = jacobsthal_numbers(j);
+  int jPerv = jacobsthal_numbers(j - 1);
+  int jCurr = jacobsthal_numbers(j);
 
-  int dif = end - start;
+  int dif = jCurr - jPerv;
 
   int pend_index = 0;
   int index = 0;
+  /*
+    pair_size = 2
+    main 4 20 11 13 5 15
+    pend 18 19, 14 16
+  */
 
-  while ((end + dif) * pair_size < static_cast<int>(new_main.size())) {
-    for (int i = pend_index; i < pend_index + dif * pair_size && i < pend.size(); i += pair_size) {
+  while (jPerv + dif <= static_cast<int>(pend.size())) { 
+    int to_insert = dif;
+    for (int i = pend_index; to_insert > 0 && to_insert; i += pair_size, --to_insert) {
+      if (i == 0) {
+        i = pair_size - 1;
+      }
+
+      assert((pair_size == 1 || i % pair_size != 0));
+
       IT it = binary_search<std::vector<int> >(
         new_main.begin(),
         new_main.end(),
         pair_size,
         pend[i]
       );
-      new_main.insert(it, pend.begin() + i, pend.begin() + i + pair_size);
+
+      std::cout << "Index: " << i << std::endl;
+      new_main.insert(it, pend.begin() + i - pair_size + 1, pend.begin() + i + 1);
     }
     pend_index += dif * pair_size;
-    index = end * pair_size;
-    start = end;
-    end = jacobsthal_numbers(++j);
-    dif = end - start;
+    index = jCurr * pair_size;
+    jPerv = jCurr;
+    jCurr = jacobsthal_numbers(++j);
+    dif = jCurr - jPerv;
     display_array(new_main);
   }
 
@@ -201,18 +225,21 @@ void sort_pairs(std::vector<int> &main, const long pair_size) {
 
   std::vector<int> new_main;
   std::vector<int> pend;
+  std::vector<int> odd;
 
   new_main.insert(new_main.begin(), main.begin(), main.begin() + pair_size);
   insert_interval(main.begin() + pair_size, main.end(), new_main, new_main.begin(), pair_size);
   insert_interval(main.begin() + pair_size * 2, main.end(), pend, pend.begin(), pair_size);
+  odd.insert(odd.begin(), main.begin() + main.size() - main.size() % pair_size, main.end());
 
   std::cout << "PairSize: " << pair_size << std::endl;
   std::cout << "Pend: "; display_array(pend);
-  std::cout << "NewMain: ";display_array(new_main);
+  std::cout << "NewMain: "; display_array(new_main);
 
   insert_pending(new_main, pend, pair_size);
 
   main = new_main;
+  main.insert(main.end(), odd.begin(), odd.end());
 }
 
 void merge_insertion_sort(std::vector<int> &numbers) {
@@ -237,40 +264,44 @@ bool is_sorted(std::vector<int>::iterator start, std::vector<int>::iterator end)
 }
 
 int main(int ac, const char **av) {
-  // std::vector<int> input_numbers;
+  std::vector<int> input_numbers;
 
-  // try {
-  //   parse_input(av + 1, ac - 1, input_numbers);
-  // } catch (const ParserError &e) {
-  //   std::cerr << "Error: " << std::endl;
-  //   e.displayError();
-  //   return EXIT_FAILURE;
-  // } catch (const std::runtime_error &e) {
-  //   std::cerr << "Error: " << e.what() << std::endl;
-  //   return EXIT_FAILURE;
-  // }
-
-  // std::cout << "Before: "; display_array(input_numbers);
-
-  // merge_insertion_sort(input_numbers);
-  // std::cout << "After: "; display_array(input_numbers);
-  // if (is_sorted(input_numbers.begin(), input_numbers.end())) {
-  //   std::cout << "DA\n";
-  // }
-
-  // return EXIT_SUCCESS;
-
-  int size = 8;
-  int temp[8] = {0, 1, 2, 3, 4, 5, 6, 7};
-
-  std::vector<int> vec(&temp[0], &temp[size]);
-  display_array(vec);
-
-  std::vector<int>::iterator it = binary_search<std::vector<int> >(vec.begin(), vec.end(), 2, 7);
-
-  if (it < vec.end()) {
-      std::cout << "Result: " << *it << std::endl;
+  try {
+    parse_input(av + 1, ac - 1, input_numbers);
+  } catch (const ParserError &e) {
+    std::cerr << "Error: " << std::endl;
+    e.displayError();
+    return EXIT_FAILURE;
+  } catch (const std::runtime_error &e) {
+    std::cerr << "Error: " << e.what() << std::endl;
+    return EXIT_FAILURE;
   }
+
+  std::cout << "Before: "; display_array(input_numbers);
+
+  merge_insertion_sort(input_numbers);
+  std::cout << "After: "; display_array(input_numbers);
+  if (is_sorted(input_numbers.begin(), input_numbers.end())) {
+    std::cout << "DA\n";
+  }
+
+  return EXIT_SUCCESS;
+
+  // int size = 8;
+  // int temp[8] = {0, 1, 2, 3, 4, 5, 6, 7};
+
+  // std::vector<int> vec(temp, &temp[size]);
+  // display_array(vec);
+
+  // int pend_size = 2;
+  // int pend_temp[2] = {-1, 4};
+  // std::vector<int> pend(pend_temp, &pend_temp[pend_size]);
+  // int value = pend[pend_size - 1];
+
+  // std::vector<int>::iterator it = binary_search<std::vector<int> >(vec.begin(), vec.end(), 2, value);
+
+  // vec.insert(it, pend.begin(), pend.begin() + pend_size);
+  // display_array(vec);
 
   return 0;
 }
