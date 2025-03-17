@@ -1,9 +1,8 @@
 NAME = PmergeMe
 COMPILER = c++ -std=c++98
-COMPILER_FLAGS = -Wall -Wextra -g #-Werror
+COMPILER_FLAGS = -Wall -Wextra -Werror
 
 SOURCES =	main.cpp	\
-			PmergeMe.cpp	\
 			ParserError.cpp	\
 			parser.cpp	\
 

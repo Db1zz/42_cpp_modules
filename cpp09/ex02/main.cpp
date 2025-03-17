@@ -1,88 +1,16 @@
 #include "ParserError.hpp"
 #include "parser.hpp"
+#include "PmergeMe.hpp"
 
 #include <iostream>
-#include <vector>
+#include <cstdlib>
 #include <algorithm>
-#include <cassert>
-#include <functional>
 
-/*
-  search = 5
+#include <vector>
+#include <deque>
 
-  [0, 1, 2, 3, 4, 5, 6, 7]
-  ^         ^            ^
-  s         m            e
-  start = 0
-  end = 7
-  mittel = start + (end - start / 2) == 3
-
-  [0, 1, 2, 3, 4, 5, 6, 7]
-                  ^     ^
-                  sm    e
-  start = 3
-  end = 7
-  mittel = start + (end - start / 2) == 5
-
-  [0, 1, 2, 3, 4, 5, 6, 7]
-                  ^  ^
-                  sm e
-  start = 5
-  end = 6
-  mittel = start + (end - start / 2) == 6
-
-  [0, 1, 2, 3, 4, 5, 6, 7]
-                  ^ 
-                  sme
-  start = 5
-  end = 5
-  mittel = start + (end - start / 2) == 5
-*/
-
-/*
-  [0, 1, 2, 3, 4, 5, 6, 7]
-  ^            ^        ^
-  s            m        e
-*/
-
-template <typename Container>
-typename Container::iterator binary_search(
-  typename Container::iterator first,
-  typename Container::iterator last,
-  int pair_size,
-  int pair_value)
-{
-  if (pair_value > *(last - 1)) {
-    return last;
-  } else if (*(first + pair_size - 1) > pair_value) {
-    return first;
-  }
-
-  int result_index = 0;
-
-  int high_pair = (last - first) / pair_size - 1;
-  int low = 0;
-  int mittel;
-
-  while (low <= high_pair) {
-    mittel = low + (high_pair - low) / 2;
-    int value = *(first + pair_size - 1 + (mittel * pair_size));
-
-    if (pair_value > value) {
-      result_index = mittel + 1;
-      low = mittel + 1;
-    } else if (pair_value < value) {
-      high_pair = mittel - 1;
-    } else {
-      break;
-    }
-  }
-  if (result_index == 0)
-  ++result_index;
-  return first + (result_index * pair_size);
-}
-
-void display_array(const std::vector<int> &array) {
+template <class Container>
+void display_array(const Container &array) {
   std::cout << "[";
 
   if (array.size()) {
@@ -98,174 +26,25 @@ void display_array(const std::vector<int> &array) {
   std::cout << "]" << std::endl;
 }
 
-void display_matrix(const std::vector<std::vector<int> > &array) {
-  std::cout << "[";
-  for (size_t i = 0; i < array.size(); i++) {
-    for (size_t j = 0; j < array[i].size(); j++) {
-      std::cout << array[i][j] << ", ";
-    }
-  }
-  std::cout << "]" << std::endl;
-}
-
-int jacobsthal_numbers(int n) {
-    if (n == 0) return 0;
-    if (n == 1) return 1;
-
-    int a = 0, b = 1, c;
-    for (int i = 2; i <= n; i++) {
-        c = b + 2 * a;
-        a = b;
-        b = c;
-    }
-    return b;
-}
-
-bool is_pair_greater(std::vector<int> &main, long p1_start, long p2_start, long pair_size) {
-  if (!(p1_start + pair_size - 1 < static_cast<long>(main.size()))
-    || !(p2_start + pair_size - 1 < static_cast<long>(main.size())))
-  {
+template<class Container1, class Container2>
+bool compare_containers(Container1 &v1, Container2 &v2) {
+  if (v1.size() != v2.size()) {
     return false;
   }
-  return (main[p1_start + pair_size - 1] > main[p2_start + pair_size - 1]);
-}
 
-template <typename Numbers>
-void insert_interval(
-  typename Numbers::iterator source_start,
-  typename Numbers::iterator source_end,
-  Numbers &dest,
-  typename Numbers::iterator insert_pos,
-  int interval_size)
-{
-  assert(source_end >= source_start);
-  assert(dest.end() >= insert_pos);
-  int i = dest.end() - insert_pos;
-
-  while (source_start + interval_size <= source_end) {
-    dest.insert(dest.begin() + i, source_start, source_start + interval_size);
-    source_start += interval_size * 2;
-    i += interval_size;
-  }
-}
-
-bool comp_upper(
-  const std::vector<int> &v1,
-  const std::vector<int> &v2)
-{
-  return v1[v1.size() - 1] < v2[v2.size() - 1];
-}
-
-void insert_pending(std::vector<int> &new_main, const std::vector<int> &pend, int pair_size)
-{
-  typedef std::vector<int>::iterator IT;
-
-  int j = 3;
-
-  int jPerv = jacobsthal_numbers(j - 1);
-  int jCurr = jacobsthal_numbers(j);
-
-  int dif = jCurr - jPerv;
-
-  int pend_index = 0;
-  int index = 0;
-  /*
-    pair_size = 2
-    main 4 20 11 13 5 15
-    pend 18 19, 14 16
-  */
-
-  while (jPerv + dif <= static_cast<int>(pend.size())) { 
-    int to_insert = dif;
-    for (int i = pend_index; to_insert > 0 && to_insert; i += pair_size, --to_insert) {
-      if (i == 0) {
-        i = pair_size - 1;
-      }
-
-      assert((pair_size == 1 || i % pair_size != 0));
-
-      IT it = binary_search<std::vector<int> >(
-        new_main.begin(),
-        new_main.end(),
-        pair_size,
-        pend[i]
-      );
-
-      std::cout << "Index: " << i << std::endl;
-      new_main.insert(it, pend.begin() + i - pair_size + 1, pend.begin() + i + 1);
-    }
-    pend_index += dif * pair_size;
-    index = jCurr * pair_size;
-    jPerv = jCurr;
-    jCurr = jacobsthal_numbers(++j);
-    dif = jCurr - jPerv;
-    display_array(new_main);
-  }
-
-  while (index < static_cast<long>(pend.size())) {
-    IT it = binary_search<std::vector<int > >(new_main.begin(), new_main.end(), pair_size, pend[index]);
-    new_main.insert(it, pend.begin() + index, pend.begin() + index + pair_size);
-    index += pair_size;
-  }
-}
-
-void sort_pairs(std::vector<int> &main, const long pair_size) {
-  const long size = (long)main.size();
-  const long pair_amount = size / pair_size;
-
-  if (pair_amount < 2) {
-    return;
-  }
-  for (long i = 0; i + pair_size < size; i += pair_size * 2) {
-    if (is_pair_greater(main, i, i + pair_size, pair_size)) {
-      std::swap_ranges(main.begin() + i, main.begin() + i + pair_size, main.begin() + i + pair_size);
+  long size = v1.size();
+  for (int i = 0; i < size; ++i) {
+    if (v1[i] != v2[i]) {
+      return false;
     }
   }
-  sort_pairs(main, pair_size * 2);
 
-  std::vector<int> new_main;
-  std::vector<int> pend;
-  std::vector<int> odd;
-
-  new_main.insert(new_main.begin(), main.begin(), main.begin() + pair_size);
-  insert_interval(main.begin() + pair_size, main.end(), new_main, new_main.begin(), pair_size);
-  insert_interval(main.begin() + pair_size * 2, main.end(), pend, pend.begin(), pair_size);
-  odd.insert(odd.begin(), main.begin() + main.size() - main.size() % pair_size, main.end());
-
-  std::cout << "PairSize: " << pair_size << std::endl;
-  std::cout << "Pend: "; display_array(pend);
-  std::cout << "NewMain: "; display_array(new_main);
-
-  insert_pending(new_main, pend, pair_size);
-
-  main = new_main;
-  main.insert(main.end(), odd.begin(), odd.end());
-}
-
-void merge_insertion_sort(std::vector<int> &numbers) {
-  if (numbers.size() <= 1) {
-    return ;
-  } 
-  sort_pairs(numbers, 1);
-}
-
-bool greater(std::vector<int>::iterator a, std::vector<int>::iterator b) {
-  return *a >= *b;
-}
-
-bool is_sorted(std::vector<int>::iterator start, std::vector<int>::iterator end) {
-  while (start + 1 < end && greater(start + 1, start)) {
-    ++start;
-  }
-  if (start + 1 != end) {
-    std::cout << "Error: " << *start << std::endl;
-  }
-  return start + 1 == end;
+  return true;
 }
 
 int main(int ac, const char **av) {
   std::vector<int> input_numbers;
-
+  std::vector<int> sort_with_stl;
   try {
     parse_input(av + 1, ac - 1, input_numbers);
   } catch (const ParserError &e) {
@@ -277,31 +56,30 @@ int main(int ac, const char **av) {
     return EXIT_FAILURE;
   }
 
+  sort_with_stl = input_numbers;
+  std::sort(sort_with_stl.begin(), sort_with_stl.end());
+
+  PmergeMe<std::vector<int> > sort_vector;
+  PmergeMe<std::deque<int> > sort_deque;
+
   std::cout << "Before: "; display_array(input_numbers);
 
-  merge_insertion_sort(input_numbers);
-  std::cout << "After: "; display_array(input_numbers);
-  if (is_sorted(input_numbers.begin(), input_numbers.end())) {
-    std::cout << "DA\n";
+  {
+    std::vector<int> sort_with_jacobsthal(input_numbers);
+
+    sort_vector.sort(sort_with_jacobsthal);
+    std::cout << "After: "; display_array(sort_with_jacobsthal);
+    if (compare_containers(sort_with_jacobsthal, sort_with_stl)) {
+      std::cout << "Цитата Папича: \"0 ошибок как всегда\"\n";
+    }
   }
+  // {
+  //   std::deque<int> sort_with_jacobsthal(input_numbers.begin(), input_numbers.end());
+  //   sort_deque.sort(sort_with_jacobsthal);
+  //   if (compare_containers(sort_with_jacobsthal, sort_with_stl)) {
+  //     std::cout << "Цитата Папича: \"0 ошибок как всегда\"\n";
+  //   }
+  // }
 
   return EXIT_SUCCESS;
-
-  // int size = 8;
-  // int temp[8] = {0, 1, 2, 3, 4, 5, 6, 7};
-
-  // std::vector<int> vec(temp, &temp[size]);
-  // display_array(vec);
-
-  // int pend_size = 2;
-  // int pend_temp[2] = {-1, 4};
-  // std::vector<int> pend(pend_temp, &pend_temp[pend_size]);
-  // int value = pend[pend_size - 1];
-
-  // std::vector<int>::iterator it = binary_search<std::vector<int> >(vec.begin(), vec.end(), 2, value);
-
-  // vec.insert(it, pend.begin(), pend.begin() + pend_size);
-  // display_array(vec);
-
-  return 0;
 }
