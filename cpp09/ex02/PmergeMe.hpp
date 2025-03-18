@@ -6,49 +6,32 @@
 #include <functional>
 
 template <class Container>
-class PmergeMe {
+struct PmergeMe {
 public:
-  PmergeMe();
-  void sort(Container &numbers);
+  static void sort(Container &numbers);
 
 private:
-typename Container::iterator binarySearch(
-  typename Container::iterator first,
-  typename Container::iterator last,
-  int pair_size,
-  int pair_value);
+  typedef typename Container::iterator IT;
 
-  bool isPairGreater(Container &main, long p1_start, long p2_start, long pair_size);
-
-  void insertInterval(
-    typename Container::iterator source_start,
-    typename Container::iterator source_end,
-    Container &dest,
-    typename Container::iterator insert_pos,
-    int interval_size);
-
-  void insertPending(
-    Container &new_main, const Container &pend, int pair_size);
-
-  void sortPairs(Container &main, const long pair_size);
-
-  int jacobsthalNumbers(int n);
+  static IT binarySearch(IT first, IT last, int pair_size, int pair_value);
+  static bool isPairGreater(Container &main, long p1_start, long p2_start, long pair_size);
+  static void insertInterval(IT source_start, IT source_end, Container &dest, IT insert_pos, int interval_size);
+  static void insertPending(Container &new_main, const Container &pend, int pair_size);
+  static void sortPairs(Container &main, const long pair_size);
+  static int jacobsthalNumbers(int n);
 };
 
 template <class Container>
 void PmergeMe<Container>::sort(Container &numbers) {
   if (numbers.size() <= 1) {
-    return ;
+    return;
   } 
   sortPairs(numbers, 1);
 }
 
 template <typename Container>
-typename Container::iterator PmergeMe<Container>::binarySearch(
-  typename Container::iterator first,
-  typename Container::iterator last,
-  int pair_size,
-  int pair_value)
+typename PmergeMe<Container>::IT PmergeMe<Container>::binarySearch(
+  IT first, IT last, int pair_size, int pair_value)
 {
   if (pair_value > *(last - 1)) {
     return last;
@@ -97,11 +80,7 @@ bool PmergeMe<Container>::isPairGreater(
 
 template <class Container>
 void PmergeMe<Container>::insertInterval(
-  typename Container::iterator source_start,
-  typename Container::iterator source_end,
-  Container &dest,
-  typename Container::iterator insert_pos,
-  int interval_size)
+  IT source_start, IT source_end, Container &dest, IT insert_pos, int interval_size)
 {
   assert(source_end >= source_start);
   assert(dest.end() >= insert_pos);
@@ -118,8 +97,6 @@ template <class Container>
 void PmergeMe<Container>::insertPending(
   Container &new_main, const Container &pend, int pair_size)
 {
-  typedef typename Container::iterator IT;
-
   int jacobsthal_index = 2;
   int jacobstahl_current = jacobsthalNumbers(jacobsthal_index);
 
@@ -130,7 +107,7 @@ void PmergeMe<Container>::insertPending(
     for (int i = pend_start; i > pend_end; i -= pair_size, pend_start += pair_size) {
       assert((pair_size == 1 || i % pair_size != 0));
 
-      IT it = binarySearch<Container>(
+      IT it = binarySearch(
         new_main.begin(),
         new_main.end(),
         pair_size,
@@ -146,7 +123,7 @@ void PmergeMe<Container>::insertPending(
   }
 
   for (int i = pend_start; i < static_cast<long>(pend.size()); i += pair_size) {
-    IT it = binarySearch<Container>(new_main.begin(), new_main.end(), pair_size, pend[i]);
+    IT it = binarySearch(new_main.begin(), new_main.end(), pair_size, pend[i]);
     new_main.insert(it, pend.begin() + i - pair_size + 1, pend.begin() + i + 1);
   }
 }
@@ -159,11 +136,13 @@ void PmergeMe<Container>::sortPairs(Container &main, const long pair_size) {
   if (pair_amount < 2) {
     return;
   }
+ 
   for (long i = 0; i + pair_size < size; i += pair_size * 2) {
     if (isPairGreater(main, i, i + pair_size, pair_size)) {
       std::swap_ranges(main.begin() + i, main.begin() + i + pair_size, main.begin() + i + pair_size);
     }
   }
+
   sortPairs(main, pair_size * 2);
 
   if (main.size() / pair_size < 3) {

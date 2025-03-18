@@ -5,6 +5,7 @@ COMPILER_FLAGS = -Wall -Wextra -Werror
 SOURCES =	main.cpp	\
 			ParserError.cpp	\
 			parser.cpp	\
+			Timer.cpp	\
 
 OBJCECTS = $(SOURCES:.cpp=.o)
 

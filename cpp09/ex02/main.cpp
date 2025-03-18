@@ -1,6 +1,7 @@
 #include "ParserError.hpp"
 #include "parser.hpp"
 #include "PmergeMe.hpp"
+#include "Timer.hpp"
 
 #include <iostream>
 #include <cstdlib>
@@ -42,6 +43,31 @@ bool compare_containers(Container1 &v1, Container2 &v2) {
   return true;
 }
 
+template <class Container>
+void measure_sorting_efficiency(Container &to_sort, const std::string &container_name)
+{
+  Timer timer;
+
+  timer.start();
+  PmergeMe<Container>::sort(to_sort);
+
+  strftime();
+
+  /*
+    Todo: Implement Timer
+  */
+
+  std::time_t time = timer.duration();
+  struct tm* time_info = std::localtime(&time);
+  size_t buffer_size = 1024;
+  char buffer[buffer_size];
+  strftime(buffer, buffer_size, "%H:%M:%S:", time_info);
+
+  std::cout << "Time to process a range of " << to_sort.size()
+            << " elements with " << container_name << " : "
+            << buffer << std::endl;
+}
+
 int main(int ac, const char **av) {
   std::vector<int> input_numbers;
   std::vector<int> sort_with_stl;
@@ -59,23 +85,25 @@ int main(int ac, const char **av) {
   sort_with_stl = input_numbers;
   std::sort(sort_with_stl.begin(), sort_with_stl.end());
 
-  PmergeMe<std::vector<int> > sort_vector;
-  PmergeMe<std::deque<int> > sort_deque;
+  std::vector<int> sort_vector_with_jacobsthal(input_numbers);
+  std::deque<int> sort_deque_with_jacobsthal(input_numbers.begin(), input_numbers.end());
+
 
   std::cout << "Before: "; display_array(input_numbers);
+  std::cout << "After: "; display_array(sort_with_stl);
+  measure_sorting_efficiency(sort_vector_with_jacobsthal, "std::vector");
+  measure_sorting_efficiency(sort_deque_with_jacobsthal, "std::deque");
 
-  {
-    std::vector<int> sort_with_jacobsthal(input_numbers);
-
-    sort_vector.sort(sort_with_jacobsthal);
-    std::cout << "After: "; display_array(sort_with_jacobsthal);
-    if (compare_containers(sort_with_jacobsthal, sort_with_stl)) {
-      std::cout << "Цитата Папича: \"0 ошибок как всегда\"\n";
-    }
-  }
   // {
-  //   std::deque<int> sort_with_jacobsthal(input_numbers.begin(), input_numbers.end());
-  //   sort_deque.sort(sort_with_jacobsthal);
+  //   PmergeMe<std::vector<int> >::sort(sort_with_jacobsthal);
+  //   std::cout << "After: "; display_array(sort_with_jacobsthal);
+  //   if (compare_containers(sort_with_jacobsthal, sort_with_stl)) {
+  //     std::cout << "Цитата Папича: \"0 ошибок как всегда\"\n";
+  //   }
+  // }
+  // {
+  //   PmergeMe<std::deque<int> >::sort(sort_with_jacobsthal);
+  //   std::cout << "After: "; display_array(sort_with_jacobsthal);
   //   if (compare_containers(sort_with_jacobsthal, sort_with_stl)) {
   //     std::cout << "Цитата Папича: \"0 ошибок как всегда\"\n";
   //   }
