@@ -43,6 +43,8 @@ bool compare_containers(Container1 &v1, Container2 &v2) {
   return true;
 }
 
+#include <sys/time.h>
+
 template <class Container>
 void measure_sorting_efficiency(Container &to_sort, const std::string &container_name)
 {
@@ -50,22 +52,15 @@ void measure_sorting_efficiency(Container &to_sort, const std::string &container
 
   timer.start();
   PmergeMe<Container>::sort(to_sort);
+  timer.stop();
 
-  strftime();
-
-  /*
-    Todo: Implement Timer
-  */
-
-  std::time_t time = timer.duration();
-  struct tm* time_info = std::localtime(&time);
-  size_t buffer_size = 1024;
-  char buffer[buffer_size];
-  strftime(buffer, buffer_size, "%H:%M:%S:", time_info);
+  time_t seconds = timer.getSeconds();
+  time_t milliseconds = timer.getMiliseconds();
+  time_t microseconds = timer.getMicroseconds();
 
   std::cout << "Time to process a range of " << to_sort.size()
             << " elements with " << container_name << " : "
-            << buffer << std::endl;
+            << seconds << ":" << milliseconds << ":" << microseconds << std::endl;
 }
 
 int main(int ac, const char **av) {

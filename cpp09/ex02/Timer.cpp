@@ -1,4 +1,6 @@
 #include "Timer.hpp"
+#include <sys/time.h>
+#include <ctime>
 
 Timer::Timer() {
   start();
@@ -18,9 +20,29 @@ Timer &Timer::operator=(const Timer &to_copy) {
 }
 
 void Timer::start() {
-  start_time_ = std::time(NULL);
+  gettimeofday(&start_time_, NULL);
 }
 
-std::time_t Timer::duration() {
-  return std::time(NULL) - start_time_;
+void Timer::stop() {
+  gettimeofday(&end_time_, NULL);
+}
+
+time_t Timer::getMinutes() const {
+  return (((getTimeInMilliseconds(end_time_) - getTimeInMilliseconds(start_time_)) / 1000 / 1000) / 60) % 60;
+}
+
+time_t Timer::getSeconds() const {
+  return ((getTimeInMilliseconds(end_time_) - getTimeInMilliseconds(start_time_)) / 1000 / 1000) % 60;
+}
+
+time_t Timer::getMiliseconds() const {
+  return (((getTimeInMilliseconds(end_time_) - getTimeInMilliseconds(start_time_)) / 1000) % 1000);
+}
+
+time_t Timer::getMicroseconds() const {
+  return ((getTimeInMilliseconds(end_time_) - getTimeInMilliseconds(start_time_)) % 1000);
+}
+
+time_t Timer::getTimeInMilliseconds(const struct timeval &time) const {
+  return (time.tv_sec * 1000 * 1000 + time.tv_usec);
 }

@@ -1,7 +1,7 @@
 #ifndef TIMER_HPP
 # define TIMER_HPP
 
-#include <ctime>
+#include <sys/time.h>
 
 class Timer {
 public:
@@ -11,10 +11,17 @@ public:
   Timer &operator=(const Timer &to_copy);
 
   void start();
-  std::time_t duration();
+  void stop();
+  time_t getMinutes() const;
+  time_t getSeconds() const;
+  time_t getMiliseconds() const;
+  time_t getMicroseconds() const;
 
 private:  
-  std::time_t start_time_;
+  time_t getTimeInMilliseconds(const struct timeval &time) const;
+
+  struct timeval start_time_;
+  struct timeval end_time_;
 };
 
 #endif  // TIMER_HPP
