@@ -1,18 +1,19 @@
 #ifndef DATE_MAP_HPP
 # define DATE_MAP_HPP
 
-#include <map>
-#include <string>
-#include <vector>
+# include "MyCoolArray.hpp"
+
+# include <map>
+# include <string>
 
 struct Date {
   std::string date_str;
   std::string value_str;
-  std::vector<int> date_keys;
+  MyCoolArray<int> date_keys;
   double date_value;
 
   Date(const std::string &date_str, const std::string &value_str,
-          const std::vector<int> &date_keys, double date_value)
+          const MyCoolArray<int> &date_keys, double date_value)
       : date_str(date_str), value_str(value_str), date_keys(date_keys), date_value(date_value) {};
   Date() : date_str(""), value_str(""), date_keys(), date_value(0) {};
 };

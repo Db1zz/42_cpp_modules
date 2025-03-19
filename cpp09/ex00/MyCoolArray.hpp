@@ -2,6 +2,7 @@
 # define MY_COOL_ARRAY_HPP
 
 #include <cstdlib>
+#include <cassert>
 
 template <typename T>
 class MyCoolArray {
@@ -11,6 +12,7 @@ public:
   ~MyCoolArray();
   MyCoolArray &operator=(const MyCoolArray &to_copy);
   T &operator[](int index);
+  const T &operator[](int index) const;
 
   void pushBack(T value);
   size_t size() const;
@@ -27,7 +29,7 @@ private:
 
 template <typename T>
 MyCoolArray<T>::MyCoolArray()
-  : size_(0), reserved_(5)
+  : reserved_(5), size_(0), data_(NULL)
 {
   realloc();
 }
@@ -41,7 +43,9 @@ MyCoolArray<T>::~MyCoolArray() {
 }
 
 template <typename T>
-MyCoolArray<T>::MyCoolArray(const MyCoolArray &to_copy) {
+MyCoolArray<T>::MyCoolArray(const MyCoolArray &to_copy)
+: reserved_(0), size_(0), data_(NULL)
+{
   *this = to_copy;
 }
 
@@ -51,7 +55,7 @@ MyCoolArray<T> &MyCoolArray<T>::operator=(const MyCoolArray &to_copy) {
     delete[] this->data_;
     this->reserved_ = to_copy.reserved_;
     this->size_ = to_copy.size_;
-    this->data_ = new int[reserved_];
+    this->data_ = new T[reserved_];
     copy(this->data_, to_copy.data_);
   }
   return *this;
@@ -59,6 +63,11 @@ MyCoolArray<T> &MyCoolArray<T>::operator=(const MyCoolArray &to_copy) {
 
 template <typename T>
 T &MyCoolArray<T>::operator[](int index) {
+  return data_[index];
+}
+
+template <typename T>
+const T &MyCoolArray<T>::operator[](int index) const {
   return data_[index];
 }
 
@@ -77,10 +86,10 @@ size_t MyCoolArray<T>::size() const {
 
 template <typename T>
 void MyCoolArray<T>::realloc() {
-  int *temp = NULL;
+  T *temp = NULL;
 
   reserved_ *= 2;
-  temp = new int[reserved_];
+  temp = new T[reserved_];
 
   if (data_ != NULL) {
     copy(temp, data_);
@@ -92,7 +101,7 @@ void MyCoolArray<T>::realloc() {
 
 template <typename T>
 void MyCoolArray<T>::copy(T *dest, const T *src) {
-  for (int i = 0; i < size_; ++i) {
+  for (size_t i = 0; i < size_; ++i) {
     dest[i] = src[i];
   }
 }

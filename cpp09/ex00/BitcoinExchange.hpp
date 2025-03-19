@@ -14,7 +14,6 @@
 
 # include <utility>
 # include <string>
-# include <vector>
 
 class BitcoinExchange {
   public:
@@ -46,16 +45,16 @@ private:
   Date extractDate(
     const std::string &d, size_t start, size_t end, const std::string &delim);
 
-  std::vector<int> extractKeysFromDate(const std::string &date);
+  MyCoolArray<int> extractKeysFromDate(const std::string &date);
 
   bool areKeysLessOrEqual(
-    const std::vector<int> date_keys1, const std::vector<int> &date_keys2);
+    const MyCoolArray<int> date_keys1, const MyCoolArray<int> &date_keys2);
 
   void isDateValidInput(const Date &date);
 
   bool validateDate(const std::string &date);
 
-  bool addDate(std::vector<Date> &date_container, Date &date);
+  bool addDate(MyCoolArray<Date> &date_container, Date &date);
 
   bool addDate(DateTree &date_tree, Date &date);
 
@@ -63,7 +62,7 @@ private:
   bool addDate(TreeBranch &date_tree, Date &date);
 
   template <typename TreeBranch, int MapDepth>
-  Date getDate(TreeBranch &date_tree, const std::vector<int> &date_keys);
+  Date getDate(TreeBranch &date_tree, const MyCoolArray<int> &date_keys);
 
   DateTree db_dates_;
 };

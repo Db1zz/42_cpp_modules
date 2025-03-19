@@ -100,7 +100,7 @@ bool BitcoinExchange::parseBuffer(
 
 template <typename TreeBranch, int MapDepth>
 Date BitcoinExchange::getDate(
-  TreeBranch &date_tree, const std::vector<int> &date_keys)
+  TreeBranch &date_tree, const MyCoolArray<int> &date_keys)
 {
   typedef typename TreeBranch::mapped_type MappedType;
 
@@ -121,7 +121,7 @@ Date BitcoinExchange::getDate(
 
 template <>
 Date BitcoinExchange::getDate<Date, 3>(
-    Date &date, const std::vector<int> &date_keys)
+    Date &date, const MyCoolArray<int> &date_keys)
 {
   if (areKeysLessOrEqual(date.date_keys, date_keys)) {
     return date;
@@ -134,7 +134,7 @@ void BitcoinExchange::exchange(
   const std::string &buffer_delimeter,
   const std::string &buffer_header)
 {
-  std::vector<Date> input_dates;
+  MyCoolArray<Date> input_dates;
   if (!parseBuffer(input_buffer, buffer_delimeter, buffer_header, input_dates)) {
     return;
   }
@@ -160,7 +160,7 @@ Date BitcoinExchange::extractDate(
 {
   size_t pos = 0;
   std::string date_str, value_str;
-  std::vector<int> date_keys;
+  MyCoolArray<int> date_keys;
   double date_value;
 
   if (pos = d.find(delim, start), pos != std::string::npos && pos < end) {
@@ -171,24 +171,24 @@ Date BitcoinExchange::extractDate(
     return Date(date_str, value_str, date_keys, date_value);
   }
   date_str = std::string(d.begin() + start, d.begin() + end);
-  return Date(date_str, "", std::vector<int>(), 0);
+  return Date(date_str, "", MyCoolArray<int>(), 0);
 }
 
-std::vector<int> BitcoinExchange::extractKeysFromDate(const std::string &date) {
-  std::vector<int> year_month_day;
+MyCoolArray<int> BitcoinExchange::extractKeysFromDate(const std::string &date) {
+  MyCoolArray<int> year_month_day;
   size_t pos = 0;
 
-  year_month_day.push_back(atoi(date.c_str()));
+  year_month_day.pushBack(atoi(date.c_str()));
   while ((pos = date.find('-', pos)) != std::string::npos) {
     ++pos;
-    year_month_day.push_back(atoi(date.c_str() + pos));
+    year_month_day.pushBack(atoi(date.c_str() + pos));
   }
 
   return year_month_day;
 }
 
 bool BitcoinExchange::areKeysLessOrEqual(
-  const std::vector<int> date_keys1, const std::vector<int> &date_keys2)
+  const MyCoolArray<int> date_keys1, const MyCoolArray<int> &date_keys2)
 {
   if (date_keys1.size() < 3 || date_keys2.size() < 3) {
     return false;
@@ -216,7 +216,7 @@ void BitcoinExchange::isDateValidInput(const Date &date) {
 }
 
 bool BitcoinExchange::validateDate(const std::string &date) {
-  std::vector<std::string> sd = utils::split(date, "-");
+  MyCoolArray<std::string> sd = utils::split(date, "-");
   int year, month, day;
   
   if (sd.size() != 3 || !utils::isFloat(sd[0])
@@ -269,7 +269,7 @@ bool BitcoinExchange::addDate<DayMap, 2>(DayMap &day_map, Date &date) {
   return false;
 }
 
-bool BitcoinExchange::addDate(std::vector<Date> &date_container, Date &date) {
-  date_container.push_back(date);
+bool BitcoinExchange::addDate(MyCoolArray<Date> &date_container, Date &date) {
+  date_container.pushBack(date);
   return true;
 }
