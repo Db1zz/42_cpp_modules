@@ -9,10 +9,12 @@
 # define BTC_MONTH 1
 # define BTC_DAY 3
 
-#include "date_map.hpp"
-#include <utility>
-#include <string>
-#include <vector>
+# include "date_map.hpp"
+# include "MyCoolArray.hpp"
+
+# include <utility>
+# include <string>
+# include <vector>
 
 class BitcoinExchange {
   public:

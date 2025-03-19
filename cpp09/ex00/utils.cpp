@@ -3,7 +3,6 @@
 #include <ios>
 #include <sstream>
 
-
 bool utils::isFloat(const std::string &str) {
 	float f;
   
