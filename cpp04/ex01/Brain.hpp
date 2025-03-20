@@ -3,7 +3,7 @@
 
 #include <string>
 
-#define IDEAS_SIZE 100
+#define IDEAS_SIZE 1024
 
 class Brain {
 public:

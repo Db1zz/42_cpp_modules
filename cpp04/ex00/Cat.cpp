@@ -6,9 +6,11 @@ Cat::Cat() {
   _type = "Cat";
 }
 
-Cat::Cat(const Cat& to_copy) {
+Cat::Cat(const Cat& to_copy)
+  : Animal(to_copy)
+{
   std::cout << "Cat's Copy Constructor was called\n";
-  _type = to_copy._type;
+  *this = to_copy;
 }
 
 Cat::~Cat() {

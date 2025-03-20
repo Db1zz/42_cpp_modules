@@ -8,14 +8,18 @@ Dog::Dog()
   _type = "Dog";
 }
 
-Dog::Dog(const Dog& to_copy) {
+Dog::Dog(const Dog& to_copy)
+  : Animal(to_copy), _brain(NULL)
+{
   std::cout << "Dog's Copy Constructor was called\n";
   *this = to_copy;
 }
 
 Dog::~Dog() {
   std::cout << "Dog's Default Destructor was called\n";
-  delete _brain;
+  if (_brain) {
+    delete _brain;
+  }
 }
 
 Dog& Dog::operator=(const Dog& to_copy) {

@@ -8,15 +8,18 @@ Cat::Cat()
   _type = "Cat";
 }
 
-Cat::Cat(const Cat& to_copy) {
+Cat::Cat(const Cat& to_copy)
+  : Animal(to_copy), _brain(NULL)
+{
   std::cout << "Cat's Copy Constructor was called\n";
-  _type = to_copy._type;
-  _brain = to_copy._brain;
+  *this = to_copy;
 }
 
 Cat::~Cat() {
   std::cout << "Cat's Default Destructor was called\n";
-  delete _brain;
+  if (_brain) {
+    delete _brain;
+  }
 }
 
 Cat& Cat::operator=(const Cat& to_copy) {

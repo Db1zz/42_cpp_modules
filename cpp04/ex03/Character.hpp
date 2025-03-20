@@ -4,7 +4,7 @@
 #include <string>
 
 #define CHAR_INVENTORY_SIZE 4
-#define UNEQUIPPED_MAX_SIZE 100
+#define UNEQUIPPED_MAX_SIZE 1024
 
 class AMateria;
 
@@ -33,6 +33,8 @@ private:
   void freeInventory();
   void copyInventory(const Character& character);
   void freeUnequippedMaterias();
+  void copyUnequippedMaterias(const Character& character);
+  void initCharacter();
 
   std::string _name;
   AMateria* _inventory[CHAR_INVENTORY_SIZE];

@@ -14,7 +14,7 @@ public:
   void makeSound() const;
 
 private:
-  const Brain* _brain;
+  Brain* _brain;
 };
 
 #endif  // DOG_HPP

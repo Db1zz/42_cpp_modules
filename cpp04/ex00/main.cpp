@@ -30,7 +30,7 @@ int main() {
 
   sliced_wrong_cat->makeSound(); // will output the animal sound!
   wrong_animal_base->makeSound();
-  
+
   delete wrong_animal_base;
   delete sliced_wrong_cat;
 

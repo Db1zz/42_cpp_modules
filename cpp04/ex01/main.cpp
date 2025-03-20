@@ -6,8 +6,8 @@
 Animal** create_animals(int size) {
   Animal** animals = new Animal*[size + 1];
 
-  for (int i = 0; i < size; i++) {
-    if (i < size / 2) {
+  for (int i = 0; i < size; ++i) {
+    if (i % 2 == 0) {
       animals[i] = new Dog();
     } else {
       animals[i] = new Cat();
@@ -18,10 +18,12 @@ Animal** create_animals(int size) {
 }
 
 void delete_animals(Animal** animals, int size) {
-  for (int i = 0; i < size; i++) {
-    delete animals[i];
+  for (int i = 0; i < size; ++i) {
+    if (animals[i]) {
+      delete animals[i];
+    }
   }
-  delete animals;
+  delete[] animals;
 }
 
 int main() {
@@ -33,5 +35,13 @@ int main() {
   std::cout << "\n=========== Deleting Animals ===========\n";
   delete_animals(animals, size);
 
+  Dog basic_dog;
+  Cat basic_cat;
+  {
+    Dog tmp_dog = basic_dog;
+    Cat tmp_cat = basic_cat;
+  }
+  basic_dog.makeSound();
+  basic_cat.makeSound();
   return 0;
 }

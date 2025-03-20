@@ -6,9 +6,11 @@ Dog::Dog() {
   _type = "Dog";
 }
 
-Dog::Dog(const Dog& to_copy) {
+Dog::Dog(const Dog& to_copy)
+  : Animal(to_copy)
+{  
   std::cout << "Dog's Copy Constructor was called\n";
-  _type = to_copy._type;
+  *this = to_copy;
 }
 
 Dog::~Dog() {

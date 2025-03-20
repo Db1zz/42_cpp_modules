@@ -48,7 +48,7 @@ AMateria* MateriaSource::createMateria(const std::string& type) {
 
 void MateriaSource::freeMateriaList() {
   for (int i = 0; i < _materias_learned; i++) {
-    free(_materias_list[i]);
+    delete _materias_list[i];
   }
 }
 

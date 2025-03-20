@@ -21,12 +21,8 @@ Animal& Animal::operator=(const Animal& to_copy) {
   if (this == &to_copy) {
     return *this;
   }
-  _type = to_copy._type;  
+  _type = to_copy._type;
   return *this;
-}
-
-void Animal::makeSound() const {
-  std::cout << "Animal makes sound\n";
 }
 
 const std::string& Animal::getType() const {

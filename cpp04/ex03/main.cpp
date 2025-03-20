@@ -17,6 +17,13 @@ int main() {
 
   tmp = src->createMateria("cure");
   me->equip(tmp);
+  tmp = src->createMateria("cure");
+  me->equip(tmp);
+  tmp = src->createMateria("cure");
+  me->equip(tmp);
+  tmp = src->createMateria("cure");
+  me->unequip(0);
+  me->equip(tmp);
 
   ICharacter* bob = new Character("bob");
   me->use(0, *bob);
@@ -28,9 +35,9 @@ int main() {
 
   {
     Character tmp = bob2;
-    std::cout << tmp.getName() << "copy\n";
   }
-  std::cout << "----\n";
+  bob2.use(0, *bob);
+  std::cout << "\n============== Calling Destructors ==============\n";
   delete bob;
   delete me;
   delete src;
