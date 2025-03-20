@@ -43,8 +43,6 @@ bool compare_containers(Container1 &v1, Container2 &v2) {
   return true;
 }
 
-#include <sys/time.h>
-
 template <class Container>
 void measure_sorting_efficiency(Container &to_sort, const std::string &container_name)
 {

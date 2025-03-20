@@ -23,7 +23,7 @@ int ParserError::getPosition() const {
 }
 
 void ParserError::displayError() const {
-  const int preview_size = 5;
+  const int preview_size = 4;
 
   std::stringstream oss;
   int start_index = std::max(0, position_ - (preview_size - 1));

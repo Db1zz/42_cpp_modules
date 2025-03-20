@@ -1,7 +1,6 @@
-
 NAME = rpn
 COMPILER = c++ -std=c++98
-COMPILER_FLAGS = -g -Wall -Wextra #-Werror
+COMPILER_FLAGS = -g -Wall -Wextra -Werror
 
 SOURCES =	main.cpp	\
 			RPN.cpp	\
