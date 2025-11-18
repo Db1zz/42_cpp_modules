@@ -1,5 +1,7 @@
 #include "iter.hpp"
+
 #include <iostream>
+#include <string>
 
 class Cont {
 public:
@@ -18,19 +20,8 @@ std::ostream &operator<<(std::ostream &o, const Cont &cl) {
   return o;
 }
 
-// class Container {
-// public:
-//   Container() {}
-//   std::string get() const { return "aboba"; }
-// };
-
-// std::ostream &operator<<(std::ostream &o, const Container &cl) {
-//   o << cl.get();
-//   return o;
-// }
-
 template<typename T>
-void print(T &x) {
+void print(T x) {
   std::cout << x << std::endl;
   return;
 }
@@ -38,7 +29,9 @@ void print(T &x) {
 int main() {
   int arr1[] = {0,1,2,3,4};
   Cont arr2[5];
+  std::string abobusi[5] = {"abobaMe4n1k", "abobaMag", "ob14n1yAboba", "abobaFlexer", "abobaShadowFiend"};
 
   iter(arr1, 5, print<int>);
   iter(arr2, 5, print<Cont>);
+  iter(abobusi, 5, print<std::string>);
 }

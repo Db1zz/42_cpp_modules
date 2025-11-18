@@ -4,7 +4,7 @@
 #include <iostream>
 
 template <typename T, typename F>
-void iter(T *arr, size_t size, F (*function)(T&)) {
+void iter(T *arr, size_t size, const F function) {
   if (arr == NULL || size == 0 || function == NULL) {
     return;
   }
