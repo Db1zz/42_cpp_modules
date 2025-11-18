@@ -6,10 +6,11 @@
 class ScalarConverter {
 public:
   static void Convert(const std::string &literal);
+
 private:
   static bool IsInputValid(const std::string &input);
-  static void DisplayDouble(double d);
-  static void DisplayDoubleToFloat(double d);
+  static void DisplayDouble(double d, long long int b);
+  static void DisplayDoubleToFloat(double d, long long int b);
   static void DisplayDoubleToInt(double d);
   static void DisplayDoubleToChar(double d);
   static bool IsVisibleChar(char c);
