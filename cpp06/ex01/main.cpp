@@ -10,7 +10,7 @@ int main() {
   if (dp) {
     std::cout << dp->value_ << std::endl;
     std::cout << dp << std::endl;
-    std::cout << &data << std::endl;  
+    std::cout << &data << std::endl;
   }
   return 0;
 }

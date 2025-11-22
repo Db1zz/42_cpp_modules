@@ -37,6 +37,7 @@ void identify(Base* p) {
     std::cout << "Failed to cast Base* to: [A,B,C]\n";
     return;
   }
+
   std::cout << CAST_MSG(type) << std::endl;
 }
 

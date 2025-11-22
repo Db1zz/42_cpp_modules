@@ -1,4 +1,4 @@
-NAME = ex00
+NAME = serializer
 COMPILER = c++ -std=c++98
 COMPILER_FLAGS = -Wall -Wextra -Werror
 
